@@ -1,5 +1,12 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
-import { CodeEditor, FileExplorer, Preview, Terminal } from "@/components";
+import {
+  CodeEditor,
+  FileExplorer,
+  PathDisplay,
+  Preview,
+  Terminal,
+} from "@/components";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -28,6 +35,7 @@ export default function IndexPage() {
         <section className="text-gray-500">Untitled project</section>
 
         <section className="flex items-center gap-2">
+          <ThemeSwitcher />
           <span className="px-2 text-gray-400">|</span>
           <a
             title="GitHub"
@@ -62,6 +70,7 @@ export default function IndexPage() {
         <ResizablePanel defaultSize={40} minSize={12}>
           <ResizablePanelGroup direction="vertical">
             <ResizablePanel defaultSize={79}>
+              <PathDisplay />
               <CodeEditor />
             </ResizablePanel>
             <ResizableHandle />
