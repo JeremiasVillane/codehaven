@@ -18,6 +18,9 @@ export function useTheme() {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
+
+    // Dispatch custom event for Monaco Editor
+    window.dispatchEvent(new CustomEvent("themeChange", { detail: theme }));
   }, [theme]);
 
   return {
