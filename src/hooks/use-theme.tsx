@@ -4,7 +4,7 @@ type Theme = "light" | "dark";
 
 export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem("theme");
+    const saved = localStorage.getItem("codehaven:theme");
     if (saved === "light" || saved === "dark") return saved;
 
     return window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -13,7 +13,7 @@ export function useTheme() {
   });
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
+    localStorage.setItem("codehaven:theme", theme);
 
     const root = document.documentElement;
     root.classList.remove("light", "dark");

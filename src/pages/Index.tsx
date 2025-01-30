@@ -1,9 +1,5 @@
 import { Header } from "@/components/Layout/header";
-import { FileExplorer, FileExplorerHeader } from "@/components/Layout/left-panel";
-import { CodeEditor, CodeEditorHeader, Terminal } from "@/components/Layout/middle-panel";
 import { panels } from "@/components/Layout/panels";
-import { Preview } from "@/components/Layout/right-panel";
-import PreviewHeader from "@/components/Layout/right-panel/preview-header";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -97,9 +93,7 @@ export default function IndexPage() {
                       )}
                     </SortableItem>
                   </ResizablePanel>
-                  {index < currentPanels.length - 1 && (
-                    <ResizableHandle />
-                  )}
+                  {index < currentPanels.length - 1 && <ResizableHandle />}
                 </React.Fragment>
               ))}
             </ResizablePanelGroup>

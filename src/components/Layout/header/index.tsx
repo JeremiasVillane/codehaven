@@ -1,7 +1,47 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
+import { useApp } from "@/contexts/AppContext";
+import { cn } from "@/lib/utils";
+import { InputText } from "primereact/inputtext";
+import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
 
 export function Header() {
+  const { projectName, setProjectName } = useApp();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newFileName, setNewFileName] = useState<string>(projectName);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditingName && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditingName]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      setIsEditingName(false);
+      setNewFileName(projectName);
+    }
+
+    if (e.key === "Enter") {
+      const trimmedName = newFileName.trim();
+
+      setNewFileName(trimmedName);
+      setProjectName(trimmedName);
+      setIsEditingName(false);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let inputValue = e.target.value;
+
+    inputValue = inputValue.replace(/[^a-zA-Z0-9 ]/g, ""); // only letters, numbers and spaces
+    inputValue = inputValue.replace(/\s+/g, " "); // delete multiple spaces
+
+    setNewFileName(inputValue);
+  };
+
   return (
     <header className="flex items-center justify-between py-2 px-6 bg-header-background border-b select-none">
       <h1 className="flex items-center gap-2 group relative">
@@ -19,7 +59,26 @@ export function Header() {
         />
       </h1>
 
-      <section className="text-gray-500">Untitled project</section>
+      <section
+        title="Edit project name..."
+        role="button"
+        onClick={() => setIsEditingName(true)}
+        className={cn("text-gray-500 cursor-text", isEditingName && "hidden")}
+      >
+        {projectName}
+      </section>
+
+      {isEditingName && (
+        <InputText
+          ref={inputRef}
+          value={newFileName}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onBlur={() => setIsEditingName(false)}
+          maxLength={66}
+          className="text-center text-base text-foreground h-6"
+        />
+      )}
 
       <section className="flex items-center gap-2">
         <ThemeSwitcher />

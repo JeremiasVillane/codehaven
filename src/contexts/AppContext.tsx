@@ -1,8 +1,16 @@
 import { Menu } from "primereact/menu";
 import { TreeNode } from "primereact/treenode";
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 interface AppContextType {
+  projectName: string;
+  setProjectName: (name: string) => void;
   menuRef: React.RefObject<Menu>;
   previewURL: string;
   setPreviewURL: (url: string) => void;
@@ -34,19 +42,29 @@ export const useApp = () => {
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-    const menuRef = useRef<Menu>(null);
-  
+  const menuRef = useRef<Menu>(null);
+
+  const [projectName, setProjectName] = useState(() => {
+    const savedName = localStorage.getItem("codehaven:project-name");
+    return savedName || "Untitled project";
+  });
   const [previewURL, setPreviewURL] = useState<string>("");
   const [nodes, setNodes] = useState<TreeNode[]>([]);
-    const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>(
-      {}
-    );
-    const [selectedKey, setSelectedKey] = useState<string | null>(null);
-    const [isCreating, setIsCreating] = useState(false);
-    const [isCreatingFolder, setIsCreatingFolder] = useState(false);
-    const [newFileName, setNewFileName] = useState("");
+  const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
+  const [newFileName, setNewFileName] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("codehaven:project-name", projectName);
+  }, [projectName]);
 
   const value = {
+    projectName,
+    setProjectName,
     menuRef,
     previewURL,
     setPreviewURL,

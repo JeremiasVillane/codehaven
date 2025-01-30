@@ -1,9 +1,13 @@
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
+import { getAppContext } from "@/contexts/AppContext";
 import { FileData } from "@/types";
+import { saveAs } from "file-saver";
+import JSZip from "jszip";
 
 export async function exportProject(files: FileData[]) {
   const zip = new JSZip();
+  const projectName = getAppContext()
+    .projectName.toLocaleLowerCase()
+    .replace(" ", "-");
 
   files.forEach((file) => {
     if (!file.isDirectory) {
@@ -12,5 +16,5 @@ export async function exportProject(files: FileData[]) {
   });
 
   const blob = await zip.generateAsync({ type: "blob" });
-  saveAs(blob, "project.zip");
+  saveAs(blob, `${projectName}.zip`);
 }
