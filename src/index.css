@@ -124,9 +124,33 @@
     @apply bg-background text-foreground;
   }
 
+  .primary-button {
+    @apply bg-indigo-900 hover:bg-indigo-800 active:scale-95 text-background px-3 py-1 flex items-center justify-center text-sm h-8 rounded-sm shadow-md;
+  }
+
   input {
     @apply px-3 py-1 h-8 text-sm rounded-sm dark:bg-[#a5a9b1] dark:placeholder:text-[#6b7280];
   }
+}
+
+.p-tree .p-treenode-content.p-highlight {
+  border-radius: 3px;
+}
+
+.p-tree .p-treenode-content.p-treenode-selectable {
+  border-radius: 3px;
+}
+
+.p-tree .p-treenode-content.p-highlight:is(.dark *) {
+  background-color: transparent !important;
+  outline: 1px solid #312e81;
+  @apply ring-0;
+}
+
+.p-tree .p-treenode-content.p-treenode-selectable:is(.dark *):hover {
+  background-color: transparent !important;
+  outline: 1px solid #4b4781;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar {
