@@ -1,9 +1,10 @@
 import IndexPage from "@/pages/Index";
+import { FileProvider } from "./contexts/FileContext";
 
 const App = () => (
-  <div>
+  <FileProvider>
     <IndexPage />
-  </div>
+  </FileProvider>
 );
 
 export default App;
