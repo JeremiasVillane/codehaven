@@ -2,15 +2,20 @@ import { useFiles } from "@/contexts/FileContext";
 import { syncContainerToDB } from "@/services/syncContainerToDB";
 import { runCommand } from "@/services/webcontainer";
 import { useEffect, useRef } from "react";
-import { Terminal as XTerm } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import "xterm/css/xterm.css";
+import { Terminal as XTerm } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import "@xterm/xterm/css/xterm.css";
+import terminalThemes from "./terminal-themes";
+import { useTheme } from "@/hooks/use-theme";
 
 export function Terminal() {
+  const { theme } = useTheme();
+  const { loadFiles } = useFiles();
+
   const terminalRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef(null);
   const xterm = useRef<XTerm | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
-  const { loadFiles } = useFiles();
 
   async function doRefresh() {
     try {
@@ -75,5 +80,50 @@ export function Terminal() {
     };
   }, []);
 
-  return <div ref={terminalRef} className="grid w-full h-full bg-black" />;
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver(() => {
+      if (fitAddon.current) {
+        fitAddon.current.fit();
+      }
+    });
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleThemeChange = (e: CustomEvent<"light" | "dark">) => {
+      if (!terminalRef.current || !xterm) return;
+
+      xterm.current.options.theme = terminalThemes[e.detail];
+    };
+
+    xterm.current.options.theme = terminalThemes[theme];
+
+    window.addEventListener("themeChange", handleThemeChange as EventListener);
+
+    return () => {
+      window.removeEventListener(
+        "themeChange",
+        handleThemeChange as EventListener
+      );
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
+      <div ref={terminalRef} className="size-full bg-black" />
+    </div>
+  );
 }

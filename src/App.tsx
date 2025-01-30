@@ -1,10 +1,10 @@
 import IndexPage from "@/pages/Index";
-import { FileProvider } from "./contexts/FileContext";
+import Providers from "./contexts/Providers";
 
 const App = () => (
-  <FileProvider>
+  <Providers>
     <IndexPage />
-  </FileProvider>
+  </Providers>
 );
 
 export default App;

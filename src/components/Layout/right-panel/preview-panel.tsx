@@ -1,10 +1,9 @@
-import { onServerReady, runCommand } from "@/services/webcontainer";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { useEffect, useState } from "react";
+import { useApp } from "@/contexts/AppContext";
+import { onServerReady } from "@/services/webcontainer";
+import { useEffect } from "react";
 
 export function Preview() {
-  const [previewURL, setPreviewURL] = useState<string>("");
+  const { previewURL, setPreviewURL } = useApp();
 
   useEffect(() => {
     startDevServer();
@@ -33,19 +32,6 @@ export function Preview() {
 
   return (
     <div className="flex flex-col size-full select-none">
-      <section className="flex gap-3 px-6 py-2 justify-between items-center bg-topbar-background text-topbar-foreground text-sm border-b border-border h-9 select-none">
-        <InputText
-          value={previewURL ?? ""}
-          className="h-6 rounded-sm w-full"
-          disabled
-        />
-        <Button text className="rounded-none" disabled={previewURL.length < 1}>
-          <i
-            className="pi pi-times hover:text-indigo-400"
-            onClick={() => setPreviewURL("")}
-          ></i>
-        </Button>
-      </section>
       {previewURL ? (
         <iframe
           src={previewURL}
