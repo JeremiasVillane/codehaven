@@ -7,75 +7,58 @@ An online IDE that provides a modern development environment in your browser.
 ## Features
 
 - 🗂️ File Explorer with file/folder management
-- 📝 A Code Editor with a powerful editing experience
--  ↔️ Resizable panels for customizable workspace layout 
-- 💻 Built-in terminal
-- 🗄️ Server in the browser
-- 💾 Local file storage
-- 🎯 Real-time preview
-- ⚡ Fast and responsive UI
+- 📝 **Monaco**-powered code editor with syntax highlighting and IntelliSense
+- ↔️ Dock-based layout with draggable and resizable panels
+- 💻 Interactive terminal with command execution
+- 🗄️ In-browser server using **WebContainer API**
+- 💾 Local file storage with **IndexedDB** persistence
+- 🎯 Real-time preview with auto-refresh
+- 🌙 Light/Dark theme support
+- ⚡ Fast and responsive UI powered by **React**
 
 ## Tech Stack
 
-- React 18
-- TypeScript
-- Monaco Editor
-- IndexedDB
-- WebContainer API
-- Prime React Components
-- Tailwind CSS
+### Frontend
+
+- **React 18** with **TypeScript**
+- **PrimeReact UI** components
+- **rc-dock** for panel layout
+- **Monaco Editor** for code editing
+- **xterm.js** for terminal emulation
+- **Tailwind CSS** for styling
+
+### Core Features
+
+- **WebContainer API** for in-browser server
+- **IndexedDB** for file storage
+- **File System API** integration
+- **JSZip** for project export/import
+
+### Build Tools
+
 - Vite
+- PostCSS
+- ESLint
+- SWC
 
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/JeremiasVillane/codehaven.git
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Run the development server:
+
 ```bash
 pnpm dev
 ```
 
 4. Open your browser and navigate to `http://localhost:5173`
-
-## Building for Production
-
-```bash
-pnpm build
-```
-
-## Project Structure
-
-```
-src/
-├── assets/         # Icons and static assets
-├── components/     # React components
-├── contexts/       # React contexts
-├── helpers/        # Helper functions 
-├── hooks/          # Custom React hooks
-├── lib/            # Utility functions
-├── pages/          # Page components
-├── services/       # API and services
-└── types/          # TypeScript type definitions
-```
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
-## Author
-
-Jeremias Villane
-- GitHub: [@JeremiasVillane](https://github.com/JeremiasVillane)
-- LinkedIn: [Jeremias Villane](https://www.linkedin.com/in/jeremias-villane/)
