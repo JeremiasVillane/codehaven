@@ -2,9 +2,9 @@ import { getAppContext } from "@/contexts/AppContext";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 
-export default function PreviewHeader() {
+export function PreviewHeader() {
   return (
-    <section className="flex gap-3 px-6 py-2 justify-between items-center bg-topbar-background text-topbar-foreground text-sm border-b border-border h-9 select-none">
+    <section className="h-[var(--topbar-height)] flex gap-3 px-6 py-2 justify-between items-center bg-topbar-background text-topbar-foreground text-sm select-none">
       <InputText
         value={getAppContext().previewURL ?? ""}
         className="h-6 rounded-sm w-full"

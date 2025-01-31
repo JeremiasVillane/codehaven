@@ -43,7 +43,7 @@ export function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between py-2 px-6 bg-header-background border-b select-none">
+    <header className="flex items-center justify-between py-2 px-6 bg-header-background select-none w-full h-[var(--header-height)]">
       <h1 className="flex items-center gap-2 group relative">
         <img
           src="/codehaven-logo.png"

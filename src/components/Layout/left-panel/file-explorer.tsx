@@ -116,7 +116,7 @@ export function FileExplorer() {
           filterPlaceholder="Search..."
           emptyMessage=" "
           className="w-full rounded-none bg-sidebar-background overflow-auto"
-          style={{ height: "calc(100vh - 5rem)" }}
+          style={{ height: "calc(100vh - var(--header-height) - var(--topbar-height))" }}
         />
       </aside>
     </>

@@ -123,7 +123,7 @@ export function Terminal() {
         overflow: "hidden",
       }}
     >
-      <div ref={terminalRef} className="size-full bg-black" />
+      <div ref={terminalRef} className="size-full bg-background" />
     </div>
   );
 }

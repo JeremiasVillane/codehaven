@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    --header-height: 2.5rem;
+    --topbar-height: 2.25rem;
+
     --background: 0 0% 100%;
     --foreground: 222.2 34% 33.9%;
 
@@ -60,7 +63,6 @@
   }
 
   .dark {
-    /* --background: 222.2 84% 4.9%; */
     --background: 240, 9%, 9%;
     --foreground: 210 40% 98%;
 
@@ -88,7 +90,7 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 9.6% 12.5%;
+    --border: 217.2 9.6% 19.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
 
@@ -153,6 +155,8 @@
   border-radius: 3px;
 }
 
+/********* CUSTOM SCROLLBAR *********/
+
 ::-webkit-scrollbar {
   width: 17px;
   height: 14px;
@@ -188,4 +192,127 @@
   background-clip: padding-box;
   border-radius: 0;
   background-color: transparent;
+}
+
+/********* RC-DOCK OVERRIDE STYLES *********/
+
+.dock-nav-wrap,
+.dock-nav-operations,
+.dock-extra-content,
+.dock-bar.drag-initiator,
+.dock-tab-btn {
+  padding: 0;
+}
+
+.dock-content {
+  background-color: hsl(0, 0%, 98%);
+}
+.dock-content:is(.dark *) {
+  background-color: hsl(240, 9%, 9%);
+}
+
+.dock-ink-bar {
+  background-color: rgb(146, 113, 180);
+}
+.dock-ink-bar:is(.dark *) {
+  background-color: rebeccapurple;
+}
+
+.dock-bar:hover {
+  cursor: move;
+}
+.dock-bar > div {
+  background-color: hsl(210, 40%, 96%);
+  height: var(--topbar-height);
+}
+.dock-bar > div:is(.dark *) {
+  background-color: hsl(240, 6%, 10%);
+}
+
+.dock-tab {
+  border: none;
+}
+.dock-tab-active {
+  background-color: hsl(210, 40%, 96%);
+}
+.dock-tab-active:is(.dark *) {
+  background-color: hsl(240, 6%, 10%);
+  color: white;
+}
+
+.dock-panel,
+.dock-bar {
+  border: 0.25px solid hsl(214.3 31.8% 91.4%);
+}
+.dock-panel:is(.dark *),
+.dock-bar:is(.dark *) {
+  border: 0.25px solid hsl(217.2 9.6% 19.5%);
+}
+.dock-panel.dock-style-explorer .dock-ink-bar {
+  background-color: transparent;
+}
+.dock-panel.dock-style-explorer .dock-tab > div {
+  padding: 0;
+  width: 100%;
+  border: none;
+}
+.dock-panel.dock-style-card .dock-tab > div {
+  padding: 0;
+  width: 100%;
+  border: none;
+}
+.dock-panel.dock-style-card .dock-tab {
+  border: 2px solid hsl(214.3 31.8% 91.4%);
+  border-bottom: none;
+}
+.dock-panel.dock-style-card .dock-tab:is(.dark *) {
+  border: 2px solid hsl(217.2 9.6% 19.5%);
+  border-bottom: none;
+}
+.dock-panel.dock-style-card .drag-initiator {
+  border-bottom: 0.25px solid hsl(214.3 31.8% 91.4%);
+}
+.dock-panel.dock-style-card .drag-initiator:is(.dark *) {
+  border-bottom: 0.25px solid hsl(217.2 9.6% 19.5%);
+}
+.dock-panel.dock-style-card .dock-tab.dock-tab-active {
+  background-color: hsl(60, 100%, 100%);
+}
+.dock-panel.dock-style-card .dock-tab.dock-tab-active:is(.dark *) {
+  background-color: hsl(0, 0%, 12%);
+}
+.dock-panel.dock-style-card .dock-tab:is(.dark *) {
+  background-color: transparent;
+  color: white;
+}
+
+div[class="dock-tab-btn"][role="tab"][aria-selected="false"] {
+  color: gray;
+}
+div[class="dock-tab-btn"][role="tab"][aria-selected="false"]:is(.dark *) {
+  color: gray;
+}
+div[class="dock-tab-btn"][role="tab"][aria-selected="true"] {
+  color: hsl(245, 55%, 48%);
+}
+div[class="dock-tab-btn"][role="tab"][aria-selected="true"]:is(.dark *) {
+  color: hsl(245, 49%, 55%);
+}
+
+.dock-panel.dock-style-card .dock-tab {
+  padding: 0.2em 1.5em 0.2em 1em;
+}
+.dock-panel.dock-style-card .drag-initiator {
+  border-bottom: none;
+}
+.dock-panel.dock-style-card .drag-initiator:is(.dark *) {
+  border-bottom: none;
+}
+.dock-panel.dock-style-card .dock-bar {
+  background-color: hsl(210, 40%, 96%);
+  border-bottom: none;
+}
+.dock-panel.dock-style-card .dock-bar:is(.dark *) {
+  background-color: hsl(240, 6%, 10%);
+  border-bottom: 0.3px solid hsl(217.2 9.6% 19.5%);
 }

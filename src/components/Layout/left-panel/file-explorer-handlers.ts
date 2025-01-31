@@ -1,7 +1,8 @@
 import { getAppContext } from "@/contexts/AppContext";
 import { getFileContext } from "@/contexts/FileContext";
-import { findNodeByKey } from "@/helpers";
+import { findNodeByKey, getTab } from "@/helpers";
 import { FileData } from "@/types";
+import { PanelData } from "rc-dock";
 
 export const handleCreateClick = (folder: boolean) => {
   getAppContext().setIsCreating(true);
@@ -14,6 +15,15 @@ export const handleFileClick = (file: FileData) => {
     getFileContext().setCurrentDirectory(file.id);
   } else {
     getFileContext().setCurrentFile(file);
+    const editorPanel = getAppContext().dockLayout.find("editor");
+
+    if (!editorPanel) return;
+    if ((editorPanel as PanelData).tabs.find((t) => t.id === file.id)) {
+      return;
+    }
+
+    const newTab = getTab(file);
+    getAppContext().dockLayout.dockMove(newTab, "editor", "middle");
   }
 };
 

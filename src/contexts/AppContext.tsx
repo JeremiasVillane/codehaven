@@ -1,5 +1,6 @@
 import { Menu } from "primereact/menu";
 import { TreeNode } from "primereact/treenode";
+import DockLayout from "rc-dock";
 import React, {
   createContext,
   useContext,
@@ -9,6 +10,8 @@ import React, {
 } from "react";
 
 interface AppContextType {
+  dockLayout: DockLayout;
+  setDockLayout: (dockLayout: DockLayout) => void;
   projectName: string;
   setProjectName: (name: string) => void;
   menuRef: React.RefObject<Menu>;
@@ -44,6 +47,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const menuRef = useRef<Menu>(null);
 
+  const [dockLayout, setDockLayout] = useState<DockLayout | null>(null);
   const [projectName, setProjectName] = useState(() => {
     const savedName = localStorage.getItem("codehaven:project-name");
     return savedName || "Untitled project";
@@ -63,6 +67,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [projectName]);
 
   const value = {
+    dockLayout,
+    setDockLayout,
     projectName,
     setProjectName,
     menuRef,

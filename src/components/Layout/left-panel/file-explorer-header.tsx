@@ -5,7 +5,7 @@ import { handleCreateClick } from "./file-explorer-handlers";
 
 export function FileExplorerHeader() {
   return (
-    <section className="flex px-6 justify-between items-center bg-topbar-background text-topbar-foreground text-sm border-b border-border h-9 select-none">
+    <section className="h-[var(--topbar-height)] w-full flex px-6 justify-between items-center bg-topbar-background text-topbar-foreground text-sm select-none">
       <AppMenu menuRef={getAppContext().menuRef} />
       <Button
         text

@@ -4,13 +4,13 @@ const terminalThemes = {
     foreground: "rebeccapurple",
     selectionBackground: "black",
     cursor: "gray",
-    cursorAccent: "gray",
+    cursorAccent: "lightgray",
   },
   dark: {
     background: "#04050b",
     foreground: "#B0A3CE",
     selectionBackground: "#f5f5f5",
-    cursor: "gray",
+    cursor: "lightgray",
     cursorAccent: "gray",
   },
 };
