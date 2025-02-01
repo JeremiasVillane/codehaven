@@ -15,6 +15,7 @@ import {
   deleteFileFromWebContainer,
   writeFile,
 } from "@/services/webcontainer";
+import { debugLog } from "@/helpers";
 
 interface FileContextType {
   files: FileData[];
@@ -56,7 +57,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await syncAllFilesToContainer(allFiles);
     } catch (error) {
-      console.error("Error loading files:", error);
+      debugLog("Error loading files:", error);
     }
   }, [currentDirectory]);
 
@@ -203,7 +204,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
 
       await loadFiles();
     } catch (error) {
-      console.error("Error importing files:", error);
+      debugLog("Error importing files:", error);
       throw error;
     }
   };

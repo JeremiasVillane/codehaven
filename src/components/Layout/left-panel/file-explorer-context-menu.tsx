@@ -2,6 +2,7 @@ import { getAppContext } from "@/contexts/AppContext";
 import { getFileContext } from "@/contexts/FileContext";
 import { deleteFile } from "@/services/db";
 import { handleCreateClick } from "./file-explorer-handlers";
+import { debugLog } from "@/helpers";
 
 export const contextMenuItems = [
   {
@@ -26,7 +27,7 @@ export const contextMenuItems = [
         await deleteFile(getAppContext().selectedKey);
         await getFileContext().loadFiles();
       } catch (err) {
-        console.error("Error deleting", err);
+        debugLog("Error deleting", err);
       }
     },
   },

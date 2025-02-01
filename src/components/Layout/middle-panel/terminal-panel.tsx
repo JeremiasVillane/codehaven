@@ -7,6 +7,7 @@ import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
 import terminalThemes from "./terminal-themes";
 import { useTheme } from "@/hooks/use-theme";
+import { debugLog } from "@/helpers";
 
 export function Terminal() {
   const { theme } = useTheme();
@@ -21,9 +22,9 @@ export function Terminal() {
     try {
       await syncContainerToDB();
       await loadFiles();
-      console.log("\r\n[SYNCHRONIZED]\r\n");
+      debugLog("SYNCHRONIZED");
     } catch (error) {
-      console.error("\r\n[SYNC ERROR]\r\n", error);
+      debugLog("SYNC ERROR", error);
     }
   }
 
@@ -54,10 +55,9 @@ export function Terminal() {
       });
 
       const exitCode = await process?.exit;
-      console.log("Shell closed, code=", exitCode);
+      debugLog("Shell closed, code=", exitCode);
     } catch (err) {
-      console.error(err);
-      xterm.current?.write(`\r\nError: ${err}\r\n`);
+      debugLog(err);
     }
   }
 

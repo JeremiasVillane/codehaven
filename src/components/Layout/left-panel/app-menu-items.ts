@@ -1,4 +1,5 @@
 import { getFileContext } from "@/contexts/FileContext";
+import { debugLog } from "@/helpers";
 import { exportProject } from "@/services/zip";
 import { MenuItem } from "primereact/menuitem";
 
@@ -31,7 +32,7 @@ export const items: MenuItem[] = [
             try {
               await getFileContext().importFiles(e.target.files);
             } catch (error) {
-              console.error("Import failed:", error);
+              debugLog("Import failed:", error);
             }
           };
           document.body.appendChild(input);

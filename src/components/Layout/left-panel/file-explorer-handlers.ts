@@ -1,6 +1,6 @@
 import { getAppContext } from "@/contexts/AppContext";
 import { getFileContext } from "@/contexts/FileContext";
-import { findNodeByKey, getTab } from "@/helpers";
+import { debugLog, findNodeByKey, getTab } from "@/helpers";
 import { FileData } from "@/types";
 import { PanelData } from "rc-dock";
 
@@ -65,7 +65,7 @@ export const handleSubmit = async (e: React.FormEvent) => {
     await getFileContext().createFile(name, getAppContext().isCreatingFolder);
     await getFileContext().loadFiles();
   } catch (error) {
-    console.error("Error creating element", error);
+    debugLog("Error creating element", error);
   } finally {
     getAppContext().setIsCreating(false);
     getAppContext().setNewFileName("");

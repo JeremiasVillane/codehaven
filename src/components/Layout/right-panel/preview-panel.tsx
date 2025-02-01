@@ -1,4 +1,5 @@
 import { useApp } from "@/contexts/AppContext";
+import { debugLog } from "@/helpers";
 import { onServerReady } from "@/services/webcontainer";
 import { useEffect } from "react";
 
@@ -26,7 +27,7 @@ export function Preview() {
       //   })
       // );
     } catch (error) {
-      console.error("Error starting dev server:", error);
+      debugLog("Error starting dev server:", error);
     }
   }
 

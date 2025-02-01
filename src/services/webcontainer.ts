@@ -1,3 +1,4 @@
+import { debugLog } from "@/helpers";
 import { WebContainer } from "@webcontainer/api";
 
 let webcontainerInstance: WebContainer | null = null;
@@ -14,7 +15,7 @@ export async function initWebcontainer(): Promise<WebContainer> {
     isInitialized = true;
     return webcontainerInstance;
   } catch (error) {
-    console.error("initWebcontainer error: ", error);
+    debugLog("initWebcontainer error: ", error);
   }
 }
 
@@ -41,7 +42,7 @@ export async function deleteFileFromWebContainer(path: string) {
     await (webcontainerInstance ?? wc).fs.rm(path, { recursive: true });
     return true;
   } catch (error) {
-    console.error("Error deleting file from WebContainer:", error);
+    debugLog("Error deleting file from WebContainer:", error);
     throw error;
   }
 }
@@ -57,7 +58,7 @@ export async function clearContainer() {
       await (webcontainerInstance ?? wc).fs.rm(filePath, { recursive: true });
     }
   } catch (error) {
-    console.error("Error clearing WebContainer:", error);
+    debugLog("Error clearing WebContainer:", error);
   }
 }
 
@@ -72,7 +73,7 @@ export async function onServerReady(
   const wc = await initWebcontainer();
 
   (webcontainerInstance ?? wc).on("server-ready", (port, url) => {
-    console.log("READY");
+    debugLog("WEBCONTAINER READY");
     callback(port, url);
   });
 }

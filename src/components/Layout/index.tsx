@@ -1,6 +1,6 @@
 import { LayoutData, TabGroup } from "rc-dock";
 import { FileExplorer, FileExplorerHeader } from "./left-panel";
-import { Terminal } from "./middle-panel";
+import { DebugConsole, Terminal } from "./middle-panel";
 import { Preview } from "./right-panel";
 
 export const defaultLayout: LayoutData = {
@@ -35,8 +35,11 @@ export const defaultLayout: LayoutData = {
             minHeight: 66,
           },
           {
+            id: "debug",
+            activeId: "terminal",
             tabs: [
               {
+                id: "terminal",
                 title: "Terminal",
                 content: <Terminal />,
                 group: "debug",
@@ -44,8 +47,16 @@ export const defaultLayout: LayoutData = {
                 minWidth: 222,
                 minHeight: 33,
               },
+              {
+                id: "console",
+                title: "Debug Console",
+                content: <DebugConsole />,
+                group: "debug",
+                cached: true,
+                minWidth: 222,
+                minHeight: 33,
+              },
             ],
-            group: "terminal",
           },
         ],
       },
@@ -75,7 +86,7 @@ export const groups: Record<string, TabGroup> = {
     maximizable: true,
     tabLocked: true,
   },
-  terminal: {
+  debug: {
     floatable: false,
     maximizable: false,
     tabLocked: true,
