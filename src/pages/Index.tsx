@@ -51,7 +51,7 @@ export default function IndexPage() {
       {isMobile && (
         <MobileNav
           activePanel={activePanel}
-          handleChangePanel={(panel) => setActivePanel(panel)}
+          handleChangePanel={setActivePanel}
         />
       )}
     </main>

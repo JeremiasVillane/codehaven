@@ -8,6 +8,7 @@ const editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
   scrollBeyondLastLine: true,
   automaticLayout: true,
   wordWrap: "on", 
+  useShadowDOM: false,
 };
 
 export default editorOptions;

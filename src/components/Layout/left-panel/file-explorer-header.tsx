@@ -1,7 +1,6 @@
 import { getAppContext } from "@/contexts/AppContext";
 import { Button } from "primereact/button";
 import { AppMenu } from "./app-menu";
-import { handleCreateClick } from "./file-explorer-handlers";
 
 export function FileExplorerHeader() {
   return (
@@ -16,22 +15,6 @@ export function FileExplorerHeader() {
       >
         <i title="Menu" className="pi pi-bars hover:text-indigo-400"></i>
       </Button>
-
-      <div className="group-hover:flex items-end gap-3 hidden">
-        <i
-          role="button"
-          title="New file..."
-          onClick={() => handleCreateClick(false)}
-          className="pi pi-file-plus hover:text-indigo-400"
-        ></i>
-
-        <i
-          role="button"
-          title="New folder..."
-          onClick={() => handleCreateClick(true)}
-          className="pi pi-folder-plus hover:text-indigo-400"
-        ></i>
-      </div>
     </section>
   );
 }

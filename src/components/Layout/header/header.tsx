@@ -91,6 +91,7 @@ export function Header() {
           href="https://github.com/JeremiasVillane/"
           target="_blank"
           rel="noopener noreferrer"
+          className="focus-visible:outline-[#b1b3f8]"
         >
           <GithubIcon
             width={21}
@@ -102,6 +103,7 @@ export function Header() {
           href="https://www.linkedin.com/in/jeremias-villane/"
           target="_blank"
           rel="noopener noreferrer"
+          className="focus-visible:outline-[#b1b3f8]"
         >
           <LinkedinIcon
             width={21}

@@ -70,13 +70,16 @@ export function FileExplorer() {
               onChange={(e) => setNewFileName(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={isCreatingFolder ? "Folder name" : "filename.ext"}
-              className="bg-gray-800 text-white"
             />
 
             <div className="flex items-center gap-3">
-              <Button type="submit" className="rounded-none">
+              <Button
+                type="submit"
+                className="rounded-none"
+                disabled={newFileName.length < 1}
+              >
                 <i
-                  className="pi pi-check text-gray-600 hover:text-indigo-700 text-sm"
+                  className="pi pi-check text-gray-600 hover:text-indigo-400 text-sm"
                   title="Create"
                 ></i>
               </Button>
@@ -88,7 +91,7 @@ export function FileExplorer() {
                 className="rounded-none"
               >
                 <i
-                  className="pi pi-times text-gray-600 hover:text-indigo-700 text-sm"
+                  className="pi pi-times text-gray-600 hover:text-indigo-400 text-sm"
                   title="Cancel"
                 ></i>
               </Button>
@@ -116,7 +119,9 @@ export function FileExplorer() {
           filterPlaceholder="Search..."
           emptyMessage=" "
           className="w-full rounded-none bg-sidebar-background overflow-y-auto"
-          style={{ height: "calc(100vh - var(--header-height) - var(--topbar-height))" }}
+          style={{
+            height: "calc(100vh - var(--header-height) - var(--topbar-height))",
+          }}
         />
       </aside>
     </>

@@ -8,7 +8,7 @@ export function MobileNav({
   handleChangePanel: (panel: string) => void;
 }) {
   return (
-    <div className="fixed h-[60] bg-[#222] flex justify-around items-center text-white z-[9999] bottom-0 inset-x-0">
+    <div className="fixed h-[60] bg-[#222] flex justify-around items-center text-white z-[9999] bottom-0 inset-x-0 select-none">
       {PANEL_IDS.map((panel) => (
         <button
           key={panel}

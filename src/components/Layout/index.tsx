@@ -2,16 +2,18 @@ import { LayoutData, TabGroup } from "rc-dock";
 import { FileExplorer, FileExplorerHeader } from "./left-panel";
 import { DebugConsole, Terminal } from "./middle-panel";
 import { Preview } from "./right-panel";
+import { handleCreateClick } from "./left-panel/file-explorer-handlers";
 
 export const defaultLayout: LayoutData = {
   dockbox: {
     mode: "horizontal",
     children: [
       {
-        id: "file-explorer",
         mode: "vertical",
         children: [
           {
+            id: "explorer",
+            panelLock: { panelStyle: "explorer" },
             tabs: [
               {
                 title: <FileExplorerHeader />,
@@ -21,7 +23,6 @@ export const defaultLayout: LayoutData = {
                 minHeight: 66,
               },
             ],
-            panelLock: { panelStyle: "explorer" },
           },
         ],
       },
@@ -30,8 +31,8 @@ export const defaultLayout: LayoutData = {
         children: [
           {
             id: "editor",
-            tabs: [],
             panelLock: { panelStyle: "card editor" },
+            tabs: [],
             minWidth: 222,
             minHeight: 66,
           },
@@ -83,6 +84,23 @@ export const groups: Record<string, TabGroup> = {
   explorer: {
     floatable: false,
     maximizable: false,
+    panelExtra: () => (
+      <div className="explorer-actions">
+        <i
+          role="button"
+          title="New file..."
+          onClick={() => handleCreateClick(false)}
+          className="pi pi-file-plus hover:text-indigo-400"
+        ></i>
+
+        <i
+          role="button"
+          title="New folder..."
+          onClick={() => handleCreateClick(true)}
+          className="pi pi-folder-plus hover:text-indigo-400"
+        ></i>
+      </div>
+    ),
   },
   editor: {
     floatable: true,

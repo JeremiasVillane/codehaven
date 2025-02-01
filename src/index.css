@@ -69,7 +69,7 @@
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222.2 24% 4.9%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
@@ -131,34 +131,8 @@
   }
 
   input {
-    @apply px-3 py-1 h-8 text-sm rounded-sm dark:bg-[#a5a9b1] dark:placeholder:text-[#6b7280];
+    @apply px-3 py-1 h-8 text-sm rounded-sm text-foreground dark:bg-[#616163] dark:placeholder:text-tertiary-foreground;
   }
-}
-
-/********* PRIME REACT OVERRIDE STYLES *********/
-
-.p-tree .p-treenode-content.p-highlight {
-  border-radius: 3px;
-}
-
-.p-tree .p-treenode-content.p-treenode-selectable {
-  border-radius: 3px;
-}
-
-.p-tree .p-treenode-content.p-highlight:is(.dark *) {
-  background-color: transparent !important;
-  outline: 1px solid #312e81;
-  @apply ring-0;
-}
-
-.p-tree .p-treenode-content.p-treenode-selectable:is(.dark *):hover {
-  background-color: transparent !important;
-  outline: 1px solid #4b4781;
-  border-radius: 3px;
-}
-
-input.p-terminal-input {
-  @apply bg-[#f5f5f5] dark:bg-[#04050b];
 }
 
 /********* CUSTOM SCROLLBAR *********/
@@ -200,6 +174,80 @@ input.p-terminal-input {
   background-color: transparent;
 }
 
+/********* PRIME REACT OVERRIDE STYLES *********/
+
+/*** Tree ***/
+.p-tree .p-treenode-content.p-highlight {
+  border-radius: 3px;
+}
+
+.p-tree .p-treenode-content.p-treenode-selectable {
+  border-radius: 3px;
+}
+
+.p-tree .p-treenode-content.p-highlight:is(.dark *) {
+  background-color: transparent !important;
+  outline: 1px solid #312e81;
+  @apply ring-0;
+}
+
+.p-tree .p-treenode-content.p-treenode-selectable:is(.dark *):hover {
+  background-color: transparent !important;
+  outline: 1px solid #4b4781;
+  border-radius: 3px;
+}
+
+.p-icon.p-tree-filter-icon {
+  @apply dark:text-white;
+}
+
+/*** Menu ***/
+.p-menu,
+.p-contextmenu {
+  @apply bg-popover rounded-md;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.p-menuitem-text {
+  @apply text-accent-foreground;
+}
+
+.p-submenu-header {
+  @apply bg-popover text-foreground;
+}
+
+.p-menuitem-link {
+  @apply hover:bg-accent bg-popover h-10 text-[0.88rem];
+}
+
+/*** Dock extra buttons ***/
+.dock-extra-content > div {
+  @apply flex items-center w-full gap-2 px-6 mt-2 text-tertiary-foreground;
+}
+
+/********* MONACO OVERRIDE STYLES *********/
+.monaco-menu {
+  @apply fixed bg-popover text-accent-foreground py-1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.monaco-menu .monaco-menu {
+  margin-top: -35px;
+}
+
+.monaco-menu .action-item {
+  @apply relative h-10 text-[0.88rem];
+}
+
+.monaco-menu .action-item:hover {
+  @apply bg-accent;
+}
+
+/*** dividers ***/
+.monaco-menu .disabled {
+  @apply bg-accent max-h-[1px] cursor-default;
+}
+
 /********* RC-DOCK OVERRIDE STYLES *********/
 
 .dock-nav-wrap,
@@ -212,9 +260,13 @@ input.p-terminal-input {
 
 .dock-content {
   background-color: hsl(0, 0%, 98%);
+  border: 0.25px solid hsl(214.3 31.8% 91.4%);
+  border-top: none;
 }
 .dock-content:is(.dark *) {
   background-color: hsl(240, 9%, 9%);
+  border: 0.25px solid hsl(217.2 9.6% 19.5%);
+  border-top: none;
 }
 
 .dock-ink-bar {
@@ -249,10 +301,12 @@ input.p-terminal-input {
 .dock-panel,
 .dock-bar {
   border: 0.25px solid hsl(214.3 31.8% 91.4%);
+  border-bottom: none;
 }
 .dock-panel:is(.dark *),
 .dock-bar:is(.dark *) {
   border: 0.25px solid hsl(217.2 9.6% 19.5%);
+  border-bottom: none;
 }
 .dock-panel.dock-style-explorer .dock-ink-bar {
   background-color: transparent;
@@ -276,10 +330,12 @@ input.p-terminal-input {
   border-bottom: none;
 }
 .dock-panel.dock-style-card .drag-initiator {
-  border-bottom: 0.25px solid hsl(214.3 31.8% 91.4%);
+  border-bottom: none;
+  /* border-bottom: 0.25px solid hsl(214.3 31.8% 91.4%); */
 }
 .dock-panel.dock-style-card .drag-initiator:is(.dark *) {
-  border-bottom: 0.25px solid hsl(217.2 9.6% 19.5%);
+  border-bottom: none;
+  /* border-bottom: 0.25px solid hsl(217.2 9.6% 19.5%); */
 }
 .dock-panel.dock-style-card .dock-tab.dock-tab-active {
   background-color: hsl(60, 100%, 100%);
@@ -320,7 +376,8 @@ div[class="dock-tab-btn"][role="tab"][aria-selected="true"]:is(.dark *) {
 }
 .dock-panel.dock-style-card .dock-bar:is(.dark *) {
   background-color: hsl(240, 6%, 10%);
-  border-bottom: 0.3px solid hsl(217.2 9.6% 19.5%);
+  border-bottom: none;
+  /* border-bottom: 0.3px solid hsl(217.2 9.6% 19.5%); */
 }
 
 .dock-panel.dock-style-debug .dock-tab {

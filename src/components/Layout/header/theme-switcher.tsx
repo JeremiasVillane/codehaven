@@ -6,7 +6,7 @@ const ThemeSwitcher = () => {
   return (
     <button
       type="button"
-      className="flex border-1 p-0 align-center justify-center"
+      className="flex border-1 p-1 align-center justify-center focus-visible:outline-[#b1b3f8]"
       onClick={toggleTheme}
       title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
     >
