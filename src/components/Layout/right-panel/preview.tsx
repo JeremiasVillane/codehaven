@@ -13,7 +13,7 @@ export function Preview() {
   async function startDevServer() {
     try {
       onServerReady((port, url) => {
-        console.log(`Server is ready on port ${port}, URL = ${url}`);
+        debugLog(`Server is ready on port ${port}, URL = ${url}`);
         setPreviewURL(url);
       });
 
