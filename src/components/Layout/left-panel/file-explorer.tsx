@@ -1,31 +1,25 @@
 import { ContextMenu } from "primereact/contextmenu";
 import { Tree, TreeDragDropEvent } from "primereact/tree";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { useFiles } from "@/contexts/FileContext";
 import { buildPrimeTree } from "@/helpers";
 
-import { InputText } from "primereact/inputtext";
-
 import { useApp } from "@/contexts/AppContext";
-import { Button } from "primereact/button";
-import { contextMenuItems } from "./file-explorer-context-menu";
+import { getContextMenuItems } from "./file-explorer-context-menu";
 import {
+  handleBackgroundClick,
   handleFileClick,
-  handleKeyDown,
-  handleSubmit,
 } from "./file-explorer-handlers";
 
 export function FileExplorer() {
-  const { files } = useFiles();
+  const { files, currentDirectory, setCurrentDirectory } = useFiles();
 
   const {
     nodes,
     setNodes,
     isCreating,
-    setIsCreating,
     isCreatingFolder,
-    setNewFileName,
     newFileName,
     selectedKey,
     expandedKeys,
@@ -36,10 +30,21 @@ export function FileExplorer() {
   const inputRef = useRef<HTMLInputElement>(null);
   const cm = useRef<ContextMenu>(null);
 
+  const memoizedTree = useMemo(
+    () => buildPrimeTree(files),
+    [files, currentDirectory, isCreating, isCreatingFolder, newFileName]
+  );
+
   useEffect(() => {
-    const tree = buildPrimeTree(files);
-    setNodes(tree);
-  }, [files]);
+    setNodes(memoizedTree);
+  }, [memoizedTree, setNodes]);
+
+  const nodeTemplate = (node: any) => {
+    if (node.data?.isCreation) {
+      return node.data.creationElement;
+    }
+    return node.label;
+  };
 
   useEffect(() => {
     if (isCreating && inputRef.current) {
@@ -47,58 +52,15 @@ export function FileExplorer() {
     }
   }, [isCreating]);
 
-  // --------------------------------------------------------
   const onDragDrop = (event: TreeDragDropEvent) => {
     setNodes(event.value);
-    // ...
   };
 
   return (
     <>
-      <ContextMenu model={contextMenuItems} ref={cm} />
+      <ContextMenu model={getContextMenuItems()} ref={cm} />
 
-      <aside className="w-full md:w-30rem">
-        {isCreating && (
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center justify-between gap-3 px-6 py-3"
-          >
-            <InputText
-              ref={inputRef}
-              type="text"
-              value={newFileName}
-              onChange={(e) => setNewFileName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={isCreatingFolder ? "Folder name" : "filename.ext"}
-            />
-
-            <div className="flex items-center gap-3">
-              <Button
-                type="submit"
-                className="rounded-none"
-                disabled={newFileName.length < 1}
-              >
-                <i
-                  className="pi pi-check text-gray-600 hover:text-indigo-400 text-sm"
-                  title="Create"
-                ></i>
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsCreating(false);
-                  setNewFileName("");
-                }}
-                className="rounded-none"
-              >
-                <i
-                  className="pi pi-times text-gray-600 hover:text-indigo-400 text-sm"
-                  title="Cancel"
-                ></i>
-              </Button>
-            </div>
-          </form>
-        )}
-
+      <aside className="w-full md:w-30rem" onClick={handleBackgroundClick}>
         <Tree
           value={nodes}
           expandedKeys={expandedKeys}
@@ -106,7 +68,12 @@ export function FileExplorer() {
           selectionMode="single"
           selectionKeys={selectedKey}
           onNodeClick={(e) => handleFileClick(e.node.data)}
-          onSelectionChange={(e) => setSelectedKey(e.value as string)}
+          onSelectionChange={(e) => {
+            setSelectedKey(e.value as string);
+            if (!e.value) {
+              setCurrentDirectory(null);
+            }
+          }}
           contextMenuSelectionKey={selectedKey}
           onContextMenuSelectionChange={(e) =>
             setSelectedKey(e.value as string)
@@ -118,6 +85,7 @@ export function FileExplorer() {
           filterMode="strict"
           filterPlaceholder="Search..."
           emptyMessage=" "
+          nodeTemplate={nodeTemplate}
           className="w-full rounded-none bg-sidebar-background overflow-y-auto"
           style={{
             height: "calc(100vh - var(--header-height) - var(--topbar-height))",

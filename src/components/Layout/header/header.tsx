@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
+import { sanitizeInput } from "@/helpers";
 
 export function Header() {
   const { projectName, setProjectName } = useApp();
@@ -31,15 +32,6 @@ export function Header() {
       setProjectName(trimmedName);
       setIsEditingName(false);
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = e.target.value;
-
-    inputValue = inputValue.replace(/[^a-zA-Z0-9 ]/g, ""); // only letters, numbers and spaces
-    inputValue = inputValue.replace(/\s+/g, " "); // delete multiple spaces
-
-    setNewFileName(inputValue);
   };
 
   return (
@@ -75,7 +67,7 @@ export function Header() {
         <InputText
           ref={inputRef}
           value={newFileName}
-          onChange={handleChange}
+          onChange={(e) => sanitizeInput(e, setNewFileName)}
           onKeyDown={handleKeyDown}
           onBlur={() => setIsEditingName(false)}
           maxLength={66}

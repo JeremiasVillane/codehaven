@@ -1,6 +1,8 @@
 import * as monaco from "monaco-editor";
 
 export const getLanguage = (filename: string) => {
+  if (!filename || filename.length < 1) return;
+
   const extension = filename.split(".").pop()?.toLowerCase();
   switch (extension) {
     case "ts":

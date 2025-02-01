@@ -10,7 +10,9 @@ export const handleCreateClick = (folder: boolean) => {
   getAppContext().setNewFileName("");
 };
 
-export const handleFileClick = (file: FileData) => {
+export const handleFileClick = (file: FileData & { isCreation?: boolean }) => {
+  if (file?.isCreation) return;
+
   if (file.isDirectory) {
     getFileContext().setCurrentDirectory(file.id);
   } else {
@@ -30,7 +32,12 @@ export const handleFileClick = (file: FileData) => {
 export const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
   if (e.key === "Escape") {
     getAppContext().setIsCreating(false);
+    getAppContext().setIsCreatingFolder(false);
     getAppContext().setNewFileName("");
+  }
+
+  if (e.key === "Enter") {
+    handleSubmit(e);
   }
 };
 
@@ -69,5 +76,13 @@ export const handleSubmit = async (e: React.FormEvent) => {
   } finally {
     getAppContext().setIsCreating(false);
     getAppContext().setNewFileName("");
+  }
+};
+
+export const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const target = e.target as HTMLElement;
+  if (target.getAttribute("data-pc-section") === "root") {
+    getAppContext().setSelectedKey(null);
+    getFileContext().setCurrentDirectory(null);
   }
 };
