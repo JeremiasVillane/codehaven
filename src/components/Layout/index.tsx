@@ -21,6 +21,7 @@ export const defaultLayout: LayoutData = {
                 minHeight: 66,
               },
             ],
+            panelLock: { panelStyle: "explorer" },
           },
         ],
       },
@@ -30,13 +31,14 @@ export const defaultLayout: LayoutData = {
           {
             id: "editor",
             tabs: [],
-            panelLock: { panelStyle: "card" },
+            panelLock: { panelStyle: "card editor" },
             minWidth: 222,
             minHeight: 66,
           },
           {
             id: "debug",
             activeId: "terminal",
+            panelLock: { panelStyle: "debug" },
             tabs: [
               {
                 id: "terminal",
@@ -61,16 +63,17 @@ export const defaultLayout: LayoutData = {
         ],
       },
       {
+        id: "preview",
+        panelLock: { panelStyle: "card preview" },
         tabs: [
           {
             title: "Preview",
             content: <Preview />,
-            minWidth: 444,
+            minWidth: 222,
             minHeight: 66,
             group: "preview",
           },
         ],
-        panelLock: { panelStyle: "card" },
       },
     ],
   },

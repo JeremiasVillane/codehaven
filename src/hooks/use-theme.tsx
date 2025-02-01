@@ -19,7 +19,7 @@ export function useTheme() {
     root.classList.remove("light", "dark");
     root.classList.add(theme);
 
-    // Dispatch custom event for Monaco Editor
+    // Dispatch custom event for Monaco Editor and XTerm
     window.dispatchEvent(new CustomEvent("themeChange", { detail: theme }));
   }, [theme]);
 

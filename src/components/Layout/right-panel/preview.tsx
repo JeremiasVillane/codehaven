@@ -22,7 +22,7 @@ export function Preview() {
       // devProc?.output.pipeTo(
       //   new WritableStream({
       //     write(data) {
-      //       console.log("[DEV LOG]", data);
+      //       debugLog("[DEV LOG]", data);
       //     },
       //   })
       // );
@@ -32,7 +32,7 @@ export function Preview() {
   }
 
   return (
-    <div className="flex flex-col size-full select-none">
+    <div className="flex flex-col size-full select-none overflow-y-auto">
       {previewURL ? (
         <iframe
           src={previewURL}

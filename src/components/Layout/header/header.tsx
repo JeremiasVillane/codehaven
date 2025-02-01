@@ -55,7 +55,7 @@ export function Header() {
           src="/codehaven-name.png"
           width="140rem"
           draggable={false}
-          className="left-6 opacity-0 translate-x-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 dark:invert"
+          className="left-6 opacity-0 translate-x-[-10px] transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 dark:invert hidden md:flex"
         />
       </h1>
 
@@ -63,7 +63,10 @@ export function Header() {
         title="Edit project name..."
         role="button"
         onClick={() => setIsEditingName(true)}
-        className={cn("text-gray-500 cursor-text", isEditingName && "hidden")}
+        className={cn(
+          "text-gray-500 cursor-text whitespace-nowrap text-sm md:text-base w-36 md:w-[33rem] text-ellipsis overflow-hidden text-center",
+          isEditingName && "hidden"
+        )}
       >
         {projectName}
       </section>

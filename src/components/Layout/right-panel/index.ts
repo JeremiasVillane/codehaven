@@ -1,2 +1,2 @@
 export * from "./preview-header";
-export * from "./preview-panel";
+export * from "./preview";

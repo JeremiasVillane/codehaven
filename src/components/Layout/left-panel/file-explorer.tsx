@@ -115,7 +115,7 @@ export function FileExplorer() {
           filterMode="strict"
           filterPlaceholder="Search..."
           emptyMessage=" "
-          className="w-full rounded-none bg-sidebar-background overflow-auto"
+          className="w-full rounded-none bg-sidebar-background overflow-y-auto"
           style={{ height: "calc(100vh - var(--header-height) - var(--topbar-height))" }}
         />
       </aside>

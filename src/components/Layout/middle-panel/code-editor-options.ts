@@ -5,9 +5,9 @@ const editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
   fontSize: 14,
   fontFamily: "JetBrains Mono",
   lineNumbers: "on",
-  scrollBeyondLastLine: false,
+  scrollBeyondLastLine: true,
   automaticLayout: true,
-  wordWrap: "on",
+  wordWrap: "on", 
 };
 
 export default editorOptions;
