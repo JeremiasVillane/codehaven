@@ -1,7 +1,7 @@
 import * as db from "@/services/db";
 import { FileData } from "@/types";
 import { v4 as uuidv4 } from "uuid";
-import { readAllFilesInContainer } from "./readAllFilesInContainer";
+import { readAllFilesInContainer } from "./read-all-files-in-container";
 
 export async function syncContainerToDB() {
   const filesInContainer = await readAllFilesInContainer();

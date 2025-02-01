@@ -3,7 +3,7 @@ import { getAppContext } from "@/contexts/AppContext";
 import { getFileContext } from "@/contexts/FileContext";
 import { FileData } from "@/types";
 import { TreeNode } from "primereact/treenode";
-import sortTreeNodes from "./sortTreeNodes";
+import sortTreeNodes from "./sort-tree-nodes";
 
 export function buildPrimeTree(files: FileData[]): TreeNode[] {
   const nodeMap = new Map<string, TreeNode>();

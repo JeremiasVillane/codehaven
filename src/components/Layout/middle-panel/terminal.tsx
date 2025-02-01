@@ -1,5 +1,5 @@
 import { useFiles } from "@/contexts/FileContext";
-import { syncContainerToDB } from "@/services/syncContainerToDB";
+import { syncContainerToDB } from "@/services/sync-container-to-db";
 import { runCommand } from "@/services/webcontainer";
 import { useEffect, useRef } from "react";
 import { Terminal as XTerm } from "@xterm/xterm";

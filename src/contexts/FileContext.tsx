@@ -8,7 +8,7 @@ import React, {
 import { v4 as uuidv4 } from "uuid";
 import * as db from "@/services/db";
 import { FileData } from "@/types";
-import { syncAllFilesToContainer } from "@/services/syncAllFilesToContainer";
+import { syncAllFilesToContainer } from "@/services/sync-all-files-to-container";
 import {
   clearContainer,
   createFolder,
