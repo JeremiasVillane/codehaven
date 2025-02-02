@@ -1,5 +1,4 @@
 import { getFileContext } from "@/contexts/FileContext";
-import { debugLog } from "@/helpers";
 import { exportProject } from "@/services/zip";
 import { MenuItem } from "primereact/menuitem";
 
@@ -29,11 +28,7 @@ export const items: MenuItem[] = [
             const e = event as unknown as React.ChangeEvent<HTMLInputElement>;
             if (!e.target.files?.length) return;
 
-            try {
-              await getFileContext().importFiles(e.target.files);
-            } catch (error) {
-              debugLog("Import failed:", error);
-            }
+            await getFileContext().importFiles(e.target.files);
           };
           document.body.appendChild(input);
           input.click();

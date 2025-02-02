@@ -1,21 +1,14 @@
-import React, {
+import { debugLog } from "@/helpers";
+import { dbService, syncService, webContainerService } from "@/services";
+import { FileData } from "@/types";
+import {
   createContext,
-  useContext,
-  useState,
-  useEffect,
   useCallback,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
-import * as db from "@/services/db";
-import { FileData } from "@/types";
-import { syncAllFilesToContainer } from "@/services/sync-all-files-to-container";
-import {
-  clearContainer,
-  createFolder,
-  deleteFileFromWebContainer,
-  writeFile,
-} from "@/services/webcontainer";
-import { debugLog } from "@/helpers";
 
 interface FileContextType {
   files: FileData[];
@@ -52,12 +45,12 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const loadFiles = useCallback(async () => {
     try {
-      const allFiles = await db.getAllFiles();
+      const allFiles = await dbService.getAllFiles();
       setFiles(allFiles);
 
-      await syncAllFilesToContainer(allFiles);
+      await syncService.syncAllFilesToContainer(allFiles);
     } catch (error) {
-      debugLog("Error loading files:", error);
+      debugLog("[FILE_PROVIDER] Error loading files:", error);
     }
   }, [currentDirectory]);
 
@@ -67,7 +60,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
-      ? (await db.getFile(currentDirectory))?.path || ""
+      ? (await dbService.getFile(currentDirectory))?.path || ""
       : "";
 
     const newPath = parentPath ? `${parentPath}/${name}` : name;
@@ -85,19 +78,19 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
       updatedAt: Date.now(),
     };
 
-    await db.saveFile(newFile);
+    await dbService.saveFile(newFile);
     await loadFiles();
   };
 
   const updateFileContent = async (id: string, content: string) => {
-    const file = await db.getFile(id);
+    const file = await dbService.getFile(id);
     if (file) {
       const updatedFile = {
         ...file,
         content,
         updatedAt: Date.now(),
       };
-      await db.saveFile(updatedFile);
+      await dbService.saveFile(updatedFile);
       if (currentFile?.id === id) {
         setCurrentFile(updatedFile);
       }
@@ -106,11 +99,11 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const deleteFile = async (id: string) => {
-    const fileToDelete = await db.getFile(id);
+    const fileToDelete = await dbService.getFile(id);
     if (!fileToDelete) return;
 
-    await db.deleteFile(id);
-    await deleteFileFromWebContainer(fileToDelete.path);
+    await dbService.deleteFile(id);
+    await webContainerService.deleteFileFromWebContainer(fileToDelete.path);
     await loadFiles();
 
     if (currentFile?.id === id) {
@@ -119,7 +112,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const getAllFiles = async () => {
-    return db.getAllFiles();
+    return dbService.getAllFiles();
   };
 
   const importFiles = async (files: FileList) => {
@@ -191,28 +184,28 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       // Save to IndexedDB
-      await db.clearAllFiles();
+      await dbService.clearAllFiles();
       for (const file of processedFiles) {
-        await db.saveFile(file);
+        await dbService.saveFile(file);
         // Also sync each file/folder to WebContainer
         if (file.isDirectory) {
-          await createFolder(file.path);
+          await webContainerService.createFolder(file.path);
         } else {
-          await writeFile(file.path, file.content);
+          await webContainerService.writeFile(file.path, file.content);
         }
       }
 
       await loadFiles();
     } catch (error) {
-      debugLog("Error importing files:", error);
+      debugLog("[FILE_PROVIDER] Error importing files:", error);
       throw error;
     }
   };
 
   const clearFiles = async () => {
-    await db.clearAllFiles();
+    await dbService.clearAllFiles();
     await loadFiles();
-    await clearContainer();
+    await webContainerService.clearContainer();
   };
 
   const value = {

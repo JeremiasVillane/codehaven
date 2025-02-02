@@ -1,6 +1,6 @@
 import { useApp } from "@/contexts/AppContext";
 import { debugLog } from "@/helpers";
-import { onServerReady } from "@/services/webcontainer";
+import { webContainerService } from "@/services";
 import { useEffect } from "react";
 
 export function Preview() {
@@ -12,8 +12,7 @@ export function Preview() {
 
   async function startDevServer() {
     try {
-      onServerReady((port, url) => {
-        debugLog(`Server is ready on port ${port}, URL = ${url}`);
+      webContainerService.onServerReady((_port, url) => {
         setPreviewURL(url);
       });
 
@@ -27,7 +26,7 @@ export function Preview() {
       //   })
       // );
     } catch (error) {
-      debugLog("Error starting dev server:", error);
+      debugLog("[PREVIEW] Error starting dev server:", error);
     }
   }
 

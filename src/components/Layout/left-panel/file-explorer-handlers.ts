@@ -72,7 +72,7 @@ export const handleSubmit = async (e: React.FormEvent) => {
     await getFileContext().createFile(name, getAppContext().isCreatingFolder);
     await getFileContext().loadFiles();
   } catch (error) {
-    debugLog("Error creating element", error);
+    debugLog("[FILE_EXPLORER] Error creating element", error);
   } finally {
     getAppContext().setIsCreating(false);
     getAppContext().setNewFileName("");

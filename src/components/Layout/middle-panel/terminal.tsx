@@ -1,13 +1,12 @@
 import { useFiles } from "@/contexts/FileContext";
-import { syncContainerToDB } from "@/services/sync-container-to-db";
-import { runCommand } from "@/services/webcontainer";
-import { useEffect, useRef } from "react";
-import { Terminal as XTerm } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
-import "@xterm/xterm/css/xterm.css";
-import terminalThemes from "./terminal-themes";
-import { useTheme } from "@/hooks/use-theme";
 import { debugLog } from "@/helpers";
+import { useTheme } from "@/hooks/use-theme";
+import { syncService, webContainerService } from "@/services";
+import { FitAddon } from "@xterm/addon-fit";
+import { Terminal as XTerm } from "@xterm/xterm";
+import "@xterm/xterm/css/xterm.css";
+import { useEffect, useRef } from "react";
+import terminalThemes from "./terminal-themes";
 
 export function Terminal() {
   const { theme } = useTheme();
@@ -20,17 +19,16 @@ export function Terminal() {
 
   async function doRefresh() {
     try {
-      await syncContainerToDB();
+      await syncService.syncContainerToDB();
       await loadFiles();
-      debugLog("SYNCHRONIZED");
     } catch (error) {
-      debugLog("SYNC ERROR", error);
+      debugLog("[TERMINAL] Sync error", error);
     }
   }
 
   async function startShell() {
     try {
-      const process = await runCommand("jsh");
+      const process = await webContainerService.runCommand("jsh");
       const writable = process?.input.getWriter();
 
       process?.output.pipeTo(
@@ -55,9 +53,9 @@ export function Terminal() {
       });
 
       const exitCode = await process?.exit;
-      debugLog("Shell closed, code=", exitCode);
+      debugLog("[TERMINAL] Shell closed, code=", exitCode);
     } catch (err) {
-      debugLog(err);
+      debugLog("[TERMINAL] Failed to start shell", err);
     }
   }
 

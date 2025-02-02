@@ -1,8 +1,8 @@
 import { getAppContext } from "@/contexts/AppContext";
 import { getFileContext } from "@/contexts/FileContext";
-import { deleteFile } from "@/services/db";
-import { handleCreateClick } from "./file-explorer-handlers";
 import { debugLog } from "@/helpers";
+import { dbService } from "@/services";
+import { handleCreateClick } from "./file-explorer-handlers";
 
 export function getContextMenuItems() {
   const appCtx = getAppContext();
@@ -32,10 +32,10 @@ export function getContextMenuItems() {
       command: async () => {
         if (!appCtx.selectedKey) return;
         try {
-          await deleteFile(appCtx.selectedKey);
+          await dbService.deleteFile(appCtx.selectedKey);
           await fileCtx.loadFiles();
         } catch (err) {
-          debugLog("Error deleting", err);
+          debugLog("[FILE_EXPLORER] Error deleting", err);
         }
       },
     },
