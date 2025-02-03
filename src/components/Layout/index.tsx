@@ -1,8 +1,8 @@
 import { LayoutData, TabGroup } from "rc-dock";
 import { FileExplorer, FileExplorerHeader } from "./left-panel";
-import { DebugConsole, Terminal } from "./middle-panel";
-import { Preview } from "./right-panel";
 import { handleCreateClick } from "./left-panel/file-explorer-handlers";
+import { DebugConsole } from "./middle-panel";
+import { Preview } from "./right-panel";
 
 export const defaultLayout: LayoutData = {
   dockbox: {
@@ -41,15 +41,6 @@ export const defaultLayout: LayoutData = {
             activeId: "terminal",
             panelLock: { panelStyle: "debug" },
             tabs: [
-              {
-                id: "terminal",
-                title: "Terminal",
-                content: <Terminal />,
-                group: "debug",
-                cached: true,
-                minWidth: 222,
-                minHeight: 33,
-              },
               {
                 id: "console",
                 title: "Debug Console",

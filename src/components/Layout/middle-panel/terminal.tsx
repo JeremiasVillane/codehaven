@@ -1,64 +1,20 @@
-import { useFiles } from "@/contexts/FileContext";
-import { debugLog } from "@/helpers";
 import { useTheme } from "@/hooks";
-import { syncService, webContainerService } from "@/services";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerm } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
 import { useEffect, useRef } from "react";
 import terminalThemes from "./terminal-themes";
+import { startShell } from "./terminal-utils";
 
-export function Terminal() {
+export function Terminal({ commands }: { commands?: string[] }) {
   const { theme } = useTheme();
-  const { loadFiles } = useFiles();
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef(null);
   const xterm = useRef<XTerm | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
 
-  async function doRefresh() {
-    try {
-      await syncService.syncContainerToDB();
-      await loadFiles();
-    } catch (error) {
-      debugLog("[TERMINAL] Sync error", error);
-    }
-  }
-
-  async function startShell() {
-    try {
-      const process = await webContainerService.runCommand("jsh");
-      const writable = process?.input.getWriter();
-
-      process?.output.pipeTo(
-        new WritableStream({
-          write(data) {
-            xterm.current?.write(data);
-          },
-        })
-      );
-
-      let syncTimeout: NodeJS.Timeout;
-
-      xterm.current?.onData(async (data) => {
-        writable?.write(data);
-
-        if (data === "\r") {
-          clearTimeout(syncTimeout);
-          syncTimeout = setTimeout(() => {
-            doRefresh();
-          }, 1000);
-        }
-      });
-
-      const exitCode = await process?.exit;
-      debugLog("[TERMINAL] Shell closed, code=", exitCode);
-    } catch (err) {
-      debugLog("[TERMINAL] Failed to start shell", err);
-    }
-  }
-
+  //*** INITIALIZATION ***//
   useEffect(() => {
     (async () => {
       xterm.current = new XTerm({ fontSize: 14 });
@@ -70,7 +26,7 @@ export function Terminal() {
         fitAddon.current.fit();
       }
 
-      await startShell();
+      await startShell(xterm, commands);
     })();
 
     return () => {
@@ -78,6 +34,7 @@ export function Terminal() {
     };
   }, []);
 
+  //*** RESIZE HANDLING ***//
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -93,6 +50,7 @@ export function Terminal() {
     };
   }, []);
 
+  //*** THEME HANDLING ***/
   useEffect(() => {
     const handleThemeChange = (e: CustomEvent<"light" | "dark">) => {
       if (!terminalRef.current || !xterm) return;

@@ -1,5 +1,7 @@
-import { debugLog } from "@/helpers";
+import { getAppContext } from "@/contexts/AppContext";
+import { debugLog, getTerminalTab } from "@/helpers";
 import { dbService, webContainerService } from "@/services";
+import { TabData } from "rc-dock";
 import flattenInitialFiles from "./builder";
 import { initialFiles } from "./seed";
 
@@ -44,7 +46,25 @@ export async function initializeProjectIfEmpty(): Promise<void> {
         }
       }
       debugLog("[PROJECT INITIALIZER] Project initialized successfully.");
+
+      const dockLayout = getAppContext().dockLayout;
+      const terminals: TabData[] = ["server", "client"].map((folder, idx) =>
+        getTerminalTab({
+          id: `terminal${idx + 1}`,
+          title: `Terminal ${idx + 1}`,
+          commands: [`cd ./${folder}`, "npm i", "npm run dev"],
+        })
+      );
+
+      terminals.map((t) => dockLayout.dockMove(t, "debug", "middle"));
     } else {
+      const dockLayout = getAppContext().dockLayout;
+      dockLayout.dockMove(
+        getTerminalTab({ id: "terminal1", title: "Terminal 1" }),
+        "debug",
+        "middle"
+      );
+
       debugLog(
         "[PROJECT INITIALIZER] IndexedDB is not empty, initial seeding is skipped."
       );
