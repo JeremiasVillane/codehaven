@@ -1,4 +1,6 @@
-const terminalThemes = {
+import { ITheme } from "@xterm/xterm";
+
+const terminalThemes: Record<string, ITheme> = {
   light: {
     background: "#f5f5f5",
     foreground: "rebeccapurple",

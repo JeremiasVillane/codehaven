@@ -1,14 +1,9 @@
-import { WebContainer } from "@webcontainer/api";
 import { debugLog } from "@/helpers";
+import { WebContainer } from "@webcontainer/api";
 // import { initial-files } from "./initial-files";
 
+import { ContainerFile } from "@/types";
 import path from "path-browserify";
-
-export interface ContainerFile {
-  path: string;
-  content: string;
-  isDirectory: boolean;
-}
 
 class WebContainerService {
   private static instance: WebContainerService;

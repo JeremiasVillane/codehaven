@@ -1,3 +1,5 @@
+import { DBSchema } from "idb";
+
 export type FileData = {
   id: string;
   name: string;
@@ -19,3 +21,17 @@ export type PanelData = {
   content: React.ReactNode;
   subPanels?: PanelData[];
 };
+
+export type ContainerFile = {
+  path: string;
+  content: string;
+  isDirectory: boolean;
+};
+
+export interface CodeHavenDB extends DBSchema {
+  files: {
+    key: string;
+    value: FileData;
+    indexes: { "by-parent": string };
+  };
+}

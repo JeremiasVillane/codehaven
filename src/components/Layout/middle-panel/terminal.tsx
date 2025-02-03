@@ -1,6 +1,6 @@
 import { useFiles } from "@/contexts/FileContext";
 import { debugLog } from "@/helpers";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "@/hooks";
 import { syncService, webContainerService } from "@/services";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerm } from "@xterm/xterm";

@@ -1,6 +1,5 @@
+import { MAX_LOGS } from "@/constants";
 import { useEffect, useState } from "react";
-
-const MAX_LOGS = 100;
 
 export function DebugConsole() {
   const [logs, setLogs] = useState<string[]>([]);

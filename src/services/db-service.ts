@@ -1,21 +1,11 @@
-import { openDB, DBSchema, IDBPDatabase } from "idb";
-import { FileData } from "@/types";
+import { DB_NAME, DB_VERSION } from "@/constants";
 import { debugLog } from "@/helpers";
-
-interface MyDB extends DBSchema {
-  files: {
-    key: string;
-    value: FileData;
-    indexes: { "by-parent": string };
-  };
-}
-
-const DB_NAME = "codehaven";
-const DB_VERSION = 1;
+import { CodeHavenDB, FileData } from "@/types";
+import { IDBPDatabase, openDB } from "idb";
 
 class DBService {
   private static instance: DBService;
-  private db: IDBPDatabase<MyDB> | null = null;
+  private db: IDBPDatabase<CodeHavenDB> | null = null;
 
   private constructor() {}
 
@@ -26,14 +16,14 @@ class DBService {
     return DBService.instance;
   }
 
-  async init(): Promise<IDBPDatabase<MyDB>> {
+  async init(): Promise<IDBPDatabase<CodeHavenDB>> {
     if (this.db) return this.db;
 
-    this.db = await openDB<MyDB>(DB_NAME, DB_VERSION, {
+    this.db = await openDB<CodeHavenDB>(DB_NAME, DB_VERSION, {
       upgrade(db) {
         const store = db.createObjectStore("files", { keyPath: "id" });
         store.createIndex("by-parent", "parentId");
-        debugLog("[INDEXED_DB] Database initialized")
+        debugLog("[INDEXED_DB] Database initialized");
       },
     });
 

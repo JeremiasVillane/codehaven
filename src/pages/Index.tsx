@@ -4,7 +4,7 @@ import { Header } from "@/components/Layout/header";
 import { PANEL_IDS } from "@/constants";
 import { useApp } from "@/contexts/AppContext";
 import { setVisibilityControl } from "@/helpers";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks";
 import { DockLayout } from "rc-dock";
 import "rc-dock/dist/rc-dock.css";
 import { useEffect, useRef, useState } from "react";

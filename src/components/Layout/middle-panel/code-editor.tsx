@@ -1,5 +1,6 @@
 import { useFiles } from "@/contexts/FileContext";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "@/hooks";
+import { FileData } from "@/types";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
@@ -9,7 +10,6 @@ import {
   handleEditorDidMount,
 } from "./code-editor-helpers";
 import editorOptions from "./code-editor-options";
-import { FileData } from "@/types";
 
 export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   const { theme } = useTheme();
