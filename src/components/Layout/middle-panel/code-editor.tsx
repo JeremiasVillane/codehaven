@@ -18,7 +18,23 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
     `vs-${theme}`
   );
 
+  const [editorValue, setEditorValue] = useState(selectedFile.content);
+
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  useEffect(() => {
+    setEditorValue(selectedFile.content);
+  }, [selectedFile]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      updateFileContent(selectedFile.id, editorValue);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [editorValue, selectedFile.id, updateFileContent]);
 
   useEffect(() => {
     const handleThemeChange = (e: CustomEvent<"light" | "dark">) => {
@@ -29,28 +45,27 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
     monaco.editor.setTheme(`vs-${theme}`);
 
     window.addEventListener("themeChange", handleThemeChange as EventListener);
-
     return () => {
       window.removeEventListener(
         "themeChange",
         handleThemeChange as EventListener
       );
     };
-  }, []);
+  }, [theme]);
 
   return (
     <Editor
       theme={currentTheme}
       height="100%"
       language={getLanguage(selectedFile.name)}
-      value={selectedFile.content}
+      value={editorValue}
       beforeMount={handleBeforeMount}
       onMount={(editor: monaco.editor.IStandaloneCodeEditor) =>
         handleEditorDidMount(editor, editorRef)
       }
       onChange={(value) => {
         if (value !== undefined) {
-          updateFileContent(selectedFile.id, value);
+          setEditorValue(value);
         }
       }}
       options={editorOptions}
