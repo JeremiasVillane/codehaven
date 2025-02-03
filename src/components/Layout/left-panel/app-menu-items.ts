@@ -1,5 +1,5 @@
 import { getFileContext } from "@/contexts/FileContext";
-import { exportProject } from "@/services/zip";
+import { zipService } from "@/services";
 import { MenuItem } from "primereact/menuitem";
 
 export const items: MenuItem[] = [
@@ -14,7 +14,7 @@ export const items: MenuItem[] = [
       {
         label: "Export...",
         icon: "pi pi-file-export",
-        command: () => exportProject(getFileContext().files),
+        command: () => zipService.exportProject(getFileContext().files),
       },
       {
         label: "Import...",
