@@ -2,6 +2,7 @@ import { LayoutData, TabGroup } from "rc-dock";
 import { FileExplorer, FileExplorerHeader } from "./left-panel";
 import { handleCreateClick } from "./left-panel/file-explorer-handlers";
 import { DebugConsole } from "./middle-panel";
+import { addTerminal } from "./middle-panel/terminal-utils";
 import { Preview } from "./right-panel";
 
 export const defaultLayout: LayoutData = {
@@ -102,6 +103,16 @@ export const groups: Record<string, TabGroup> = {
     floatable: false,
     maximizable: false,
     tabLocked: true,
+    panelExtra: () => (
+      <div>
+        <i
+          role="button"
+          title="New terminal"
+          onClick={addTerminal}
+          className="pi pi-plus hover:text-indigo-400 -mr-3"
+        ></i>
+      </div>
+    ),
   },
   preview: {
     floatable: true,

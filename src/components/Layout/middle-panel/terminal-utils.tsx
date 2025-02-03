@@ -1,7 +1,10 @@
+import { getAppContext } from "@/contexts/AppContext";
 import { getFileContext } from "@/contexts/FileContext";
 import { debugLog } from "@/helpers";
 import { syncService, webContainerService } from "@/services";
 import { Terminal as XTerm } from "@xterm/xterm";
+import { PanelData, TabData } from "rc-dock";
+import { Terminal } from "./terminal";
 
 async function doRefresh() {
   try {
@@ -51,4 +54,27 @@ export async function startShell(
   } catch (err) {
     debugLog("[TERMINAL] Failed to start shell", err);
   }
+}
+
+export function addTerminal() {
+  const dockLayout = getAppContext().dockLayout;
+  if (!dockLayout) return;
+
+  const debugPanel = dockLayout.find("debug");
+  const numOfTerminals = (debugPanel as PanelData).tabs.filter(
+    (t) => t.id !== "console"
+  ).length;
+
+  const newTerminal: TabData = {
+    id: `terminal${numOfTerminals + 1}`,
+    title: `Terminal ${numOfTerminals + 1}`,
+    content: <Terminal />,
+    group: "debug",
+    cached: true,
+    closable: true,
+    minWidth: 222,
+    minHeight: 33,
+  };
+
+  dockLayout.dockMove(newTerminal, "debug", "middle");
 }
