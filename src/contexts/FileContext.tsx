@@ -10,7 +10,7 @@ import {
 } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-interface FileContextType {
+interface IFileContext {
   files: FileData[];
   currentFile: FileData | null;
   currentDirectory: string | null;
@@ -25,8 +25,8 @@ interface FileContextType {
   clearFiles: () => Promise<void>;
 }
 
-const FileContext = createContext<FileContextType | null>(null);
-let externalContext: FileContextType | null = null;
+const FileContext = createContext<IFileContext | null>(null);
+let externalContext: IFileContext | null = null;
 
 export const useFiles = () => {
   const context = useContext(FileContext);
@@ -52,7 +52,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (error) {
       debugLog("[FILE_PROVIDER] Error loading files:", error);
     }
-  }, [currentDirectory]);
+  }, []);
 
   useEffect(() => {
     loadFiles();
@@ -82,19 +82,30 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     await loadFiles();
   };
 
-  const updateFileContent = async (id: string, content: string) => {
+  const updateFileContent = async (id: string, newContent: string) => {
     const file = await dbService.getFile(id);
+    if (!file) return;
+    if (file.content === newContent) return;
+
     if (file) {
       const updatedFile = {
         ...file,
-        content,
+        content: newContent,
         updatedAt: Date.now(),
       };
       await dbService.saveFile(updatedFile);
+      await webContainerService.writeFile(
+        updatedFile.path,
+        updatedFile.content
+      );
+
       if (currentFile?.id === id) {
         setCurrentFile(updatedFile);
       }
-      await loadFiles();
+
+      setFiles((prevFiles) =>
+        prevFiles.map((f) => (f.id === id ? updatedFile : f))
+      );
     }
   };
 
@@ -127,21 +138,21 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
         // Skip the root folder itself
         if (file.webkitRelativePath === rootFolder) continue;
 
-        // Remove root folder from path
         const fullPath = file.webkitRelativePath;
-        const path = fullPath.substring(rootFolder.length + 1);
+        // Remove root folder from path
+        const relativePath = fullPath.substring(rootFolder.length + 1);
+        if (!relativePath) continue;
 
-        // Skip if path is empty (means it was the root folder)
-        if (!path) continue;
-
-        const pathParts = path.split("/");
+        const pathParts = relativePath.split("/");
         const name = pathParts[pathParts.length - 1];
 
         // Create parent folders if needed
         let currentPath = "";
         for (const part of pathParts.slice(0, -1)) {
           currentPath = currentPath ? `${currentPath}/${part}` : part;
-          const dirExists = processedFiles.some((f) => f.path === currentPath);
+          const dirExists = processedFiles.some(
+            (f) => f.path === currentPath && f.isDirectory
+          );
 
           if (!dirExists) {
             processedFiles.push({
@@ -164,7 +175,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
           id: uuidv4(),
           name,
           content,
-          path,
+          path: relativePath,
           type: name.split(".").pop() || "",
           parentId: null, // Will set later
           isDirectory: false,
@@ -178,8 +189,10 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
         const pathParts = file.path.split("/");
         if (pathParts.length > 1) {
           const parentPath = pathParts.slice(0, -1).join("/");
-          const parentFile = processedFiles.find((f) => f.path === parentPath);
-          file.parentId = parentFile?.id || null;
+          const parent = processedFiles.find(
+            (f) => f.path === parentPath && f.isDirectory
+          );
+          file.parentId = parent ? parent.id : null;
         }
       }
 
@@ -187,14 +200,25 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
       await dbService.clearAllFiles();
       for (const file of processedFiles) {
         await dbService.saveFile(file);
-        // Also sync each file/folder to WebContainer
-        if (file.isDirectory) {
+      }
+
+      // Synchronize incrementally in the WebContainer:
+      // 1. Create the folders (only if they are new).
+      const createdFolders = new Set<string>();
+      for (const file of processedFiles) {
+        if (file.isDirectory && !createdFolders.has(file.path)) {
           await webContainerService.createFolder(file.path);
-        } else {
+          createdFolders.add(file.path);
+        }
+      }
+      // 2. Write the files with their contents
+      for (const file of processedFiles) {
+        if (!file.isDirectory) {
           await webContainerService.writeFile(file.path, file.content);
         }
       }
 
+      // Finally, update the list of files in the context state.
       await loadFiles();
     } catch (error) {
       debugLog("[FILE_PROVIDER] Error importing files:", error);

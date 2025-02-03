@@ -26,7 +26,6 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
       setCurrentTheme(`vs-${e.detail}`);
     };
 
-    // const selectedTheme = localStorage.getItem("codehaven:theme") || theme;
     monaco.editor.setTheme(`vs-${theme}`);
 
     window.addEventListener("themeChange", handleThemeChange as EventListener);

@@ -85,7 +85,7 @@ export const groups: Record<string, TabGroup> = {
     floatable: false,
     maximizable: false,
     panelExtra: () => (
-      <div className="explorer-actions">
+      <div>
         <i
           role="button"
           title="New file..."

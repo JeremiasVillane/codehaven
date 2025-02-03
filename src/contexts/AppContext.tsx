@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 
-interface AppContextType {
+interface IAppContext {
   dockLayout: DockLayout;
   setDockLayout: (dockLayout: DockLayout) => void;
   projectName: string;
@@ -31,8 +31,8 @@ interface AppContextType {
   setNewFileName: (name: string) => void;
 }
 
-const AppContext = createContext<AppContextType | null>(null);
-let externalContext: AppContextType | null = null;
+const AppContext = createContext<IAppContext | null>(null);
+let externalContext: IAppContext | null = null;
 
 export const useApp = () => {
   const context = useContext(AppContext);
