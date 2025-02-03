@@ -344,7 +344,7 @@ app.get("/", (_req, res) => {
         <meta charset="UTF-8">
         <title>CodeHaven: Basic CRUD Server Example</title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 2rem; }
+          body { font-family: Arial, sans-serif; margin: 2rem; background-color: white }
           button { padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; }
         </style>
       </head>
@@ -352,11 +352,53 @@ app.get("/", (_req, res) => {
         <h1>CodeHaven</h1>
         <h2>Basic CRUD Server Example</h2>
         <p>This is a basic example of a CRUD application.</p>
-        <button onclick="window.location.href='http://localhost:3000/api/items'">View Items</button>
+        <button onclick="window.location.href='/items'">View Items</button>
       </body>
     </html>
   \`);
 });
+
+app.get("/items", async (req, res) => {
+  try {
+    const result = await db.getItems();
+    if (result.status === 200) {
+      const itemsJson = JSON.stringify(result.data, null, 2);
+      res.send(\`
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <title>Items JSON</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 2rem; background-color: #f9fafb }
+              pre { 
+                background-color: white; 
+                padding: 1rem; 
+                border-radius: 4px; 
+                white-space: pre-wrap;
+              }
+              button { 
+                padding: 0.5rem 1rem; 
+                font-size: 1rem; 
+                cursor: pointer; 
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Items JSON</h1>
+            <pre>\${itemsJson}</pre>
+            <button onclick="window.location.href='/'">Back to Home</button>
+          </body>
+        </html>
+      \`);
+    } else {
+      res.status(result.status).send(result.error);
+    }
+  } catch (err) {
+    res.status(500).send("Internal server error");
+  }
+});
+
 
 app.get("/api/items", async (_req, res) => {
   try {
@@ -920,30 +962,3 @@ createRoot(document.getElementById('root')!).render(
     },
   },
 };
-
-// export const initialFiles = {
-//   "index.html": `<!DOCTYPE html>
-// <html>
-//   <head>
-//     <meta charset="utf-8">
-//     <title>Example Project</title>
-//   </head>
-//   <body>
-//     <h1>Hello World</h1>
-//   </body>
-// </html>`,
-//   "style.css": `body {
-//   font-family: sans-serif;
-//   background-color: #f0f0f0;
-// }`,
-//   src: {
-//     "app.js": `console.log('Hi from app.js');`,
-//     "utils.js": `export function sum(a, b) {
-//   return a + b;
-// }`,
-//   },
-//   "README.md": `# Example Project
-
-// This is an example project.
-// `,
-// };

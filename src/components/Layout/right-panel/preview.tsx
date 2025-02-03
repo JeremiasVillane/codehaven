@@ -1,34 +1,19 @@
-import { useApp } from "@/contexts/AppContext";
-import { debugLog } from "@/helpers";
-import { webContainerService } from "@/services";
-import { useEffect } from "react";
+export function Preview({ previewURL }: { previewURL: string }) {
+  // const { previewURL, setPreviewURL } = useApp();
 
-export function Preview() {
-  const { previewURL, setPreviewURL } = useApp();
+  // useEffect(() => {
+  //   startDevServer();
+  // }, []);
 
-  useEffect(() => {
-    startDevServer();
-  }, []);
-
-  async function startDevServer() {
-    try {
-      webContainerService.onServerReady((_port, url) => {
-        setPreviewURL(url);
-      });
-
-      // const devProc = await runCommand("npm", ["run", "dev"]);
-
-      // devProc?.output.pipeTo(
-      //   new WritableStream({
-      //     write(data) {
-      //       debugLog("[DEV LOG]", data);
-      //     },
-      //   })
-      // );
-    } catch (error) {
-      debugLog("[PREVIEW] Error starting dev server:", error);
-    }
-  }
+  // async function startDevServer() {
+  //   try {
+  //     webContainerService.onServerReady((_port, url) => {
+  //       setPreviewURL(url);
+  //     });
+  //   } catch (error) {
+  //     debugLog("[PREVIEW] Error starting dev server:", error);
+  //   }
+  // }
 
   return (
     <div className="flex flex-col size-full select-none overflow-y-auto">
@@ -36,7 +21,7 @@ export function Preview() {
         <iframe
           src={previewURL}
           className="w-full h-full border-none"
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
         />
       ) : (
         <div className="bg-preview-background size-full flex flex-col items-center gap-6">

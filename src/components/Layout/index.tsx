@@ -59,13 +59,13 @@ export const defaultLayout: LayoutData = {
         id: "preview",
         panelLock: { panelStyle: "card preview" },
         tabs: [
-          {
-            title: "Preview",
-            content: <Preview />,
-            minWidth: 222,
-            minHeight: 66,
-            group: "preview",
-          },
+          // {
+          //   title: "Preview",
+          //   content: <Preview />,
+          //   minWidth: 222,
+          //   minHeight: 66,
+          //   group: "preview",
+          // },
         ],
       },
     ],
@@ -117,6 +117,6 @@ export const groups: Record<string, TabGroup> = {
   preview: {
     floatable: true,
     maximizable: true,
-    tabLocked: true,
+    tabLocked: false,
   },
 };

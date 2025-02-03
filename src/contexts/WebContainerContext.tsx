@@ -1,3 +1,4 @@
+import { debugLog } from "@/helpers";
 import { webContainerService } from "@/services";
 import {
   createContext,
@@ -6,6 +7,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useApp } from "./AppContext";
+import { Preview } from "@/components/Layout/right-panel";
 
 interface IWebContainerContext {
   loading: boolean;
@@ -22,6 +25,8 @@ const WebContainerContext = createContext<IWebContainerContext>({
 });
 
 export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
+  const { dockLayout } = useApp();
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -43,6 +48,31 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
 
     initialize();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        webContainerService.onServerReady((port, url) => {
+          if (!dockLayout) return;
+
+          dockLayout.dockMove(
+            {
+              id: `${port}`,
+              title: `localhost:${port}`,
+              content: <Preview previewURL={url} />,
+              group: "preview",
+              minWidth: 222,
+              minHeight: 66,
+            },
+            "preview",
+            "middle"
+          );
+        });
+      } catch (error) {
+        debugLog("[WEBCONTAINER] Error starting dev server:", error);
+      }
+    })();
+  }, [dockLayout]);
 
   return (
     <WebContainerContext.Provider
