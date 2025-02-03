@@ -23,7 +23,7 @@ export function DebugConsole() {
   }, []);
 
   return (
-    <div className="size-full overflow-y-auto p-2 font-mono whitespace-pre-wrap text-sm bg-[#f5f5f5] dark:bg-[#04050b] text-[rebeccapurple] dark:text-[#B0A3CE]">
+    <div className="size-full overflow-y-auto p-2 font-mono whitespace-pre-wrap text-xs md:text-sm bg-[#f5f5f5] dark:bg-[#04050b] text-[rebeccapurple] dark:text-[#B0A3CE]">
       {logs.map((log, index) => (
         <div key={index}>{log}</div>
       ))}

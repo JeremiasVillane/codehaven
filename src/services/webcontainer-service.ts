@@ -1,6 +1,5 @@
 import { debugLog } from "@/helpers";
 import { WebContainer } from "@webcontainer/api";
-// import { initial-files } from "./initial-files";
 
 import { ContainerFile } from "@/types";
 import path from "path-browserify";
@@ -27,8 +26,6 @@ class WebContainerService {
       try {
         debugLog("[WEBCONTAINER] Initializing service...");
         this.webcontainer = await WebContainer.boot();
-        // debugLog("[WEBCONTAINER] Mounting files...");
-        // await this.webcontainer.mount(initial-files);
         return this.webcontainer;
       } catch (error) {
         debugLog("[WEBCONTAINER] Boot error:", error);
@@ -60,7 +57,6 @@ class WebContainerService {
         await wc.fs.mkdir(dir, { recursive: true });
       } catch (error) {
         debugLog("[WEBCONTAINER] Error creating directory:", error);
-        // Puede ser que ya exista, por lo que no lanzamos
       }
     }
     try {

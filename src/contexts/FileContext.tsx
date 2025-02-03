@@ -1,4 +1,5 @@
 import { debugLog } from "@/helpers";
+import { initializeProjectIfEmpty } from "@/seed/seeder";
 import { dbService, syncService, webContainerService } from "@/services";
 import { FileData } from "@/types";
 import {
@@ -54,9 +55,20 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  // useEffect(() => {
+  //   loadFiles();
+  // }, [currentDirectory, loadFiles]);
+
   useEffect(() => {
-    loadFiles();
-  }, [currentDirectory, loadFiles]);
+    (async () => {
+      try {
+        await initializeProjectIfEmpty();
+        await loadFiles();
+      } catch (error) {
+        debugLog("[FILE_PROVIDER] Error initializing project:", error);
+      }
+    })();
+  }, [loadFiles]);
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
