@@ -3,7 +3,7 @@ import { sanitizeInput } from "@/helpers";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useRef } from "react";
-import { handleKeyDown } from "./file-explorer-handlers";
+import { handleKeyDown, handleSubmit } from "./file-explorer-handlers";
 
 export default function NewFileForm() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -18,22 +18,33 @@ export default function NewFileForm() {
   } = getAppContext();
 
   return (
-    <div className="flex items-center justify-between gap-3">
-      {isCreatingFolder ? (
-        <i className="pi pi-fw pi-folder" />
-      ) : isCreating ? (
-        <i className="pi pi-fw pi-file" />
-      ) : null}
-      <InputText
-        ref={inputRef}
-        value={newFileName}
-        onChange={(e) => sanitizeInput(e, setNewFileName)}
-        onKeyDown={handleKeyDown}
-        placeholder={isCreatingFolder ? "Folder name" : "filename.ext"}
-        maxLength={33}
-      />
-      <div className="flex items-center gap-3">
-        <Button className="rounded-none" disabled={newFileName.length < 1}>
+    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+      <section className="flex items-center gap-3">
+        {isCreatingFolder ? (
+          <i className="pi pi-fw pi-folder" />
+        ) : isCreating ? (
+          <i className="pi pi-fw pi-file" />
+        ) : null}
+        <InputText
+          ref={inputRef}
+          value={newFileName}
+          onChange={(e) => sanitizeInput(e, setNewFileName)}
+          onKeyDown={handleKeyDown}
+          placeholder={isCreatingFolder ? "Folder name" : "filename.ext"}
+          maxLength={33}
+        />
+      </section>
+
+      <section className="flex items-center gap-3 ml-8 md:ml-0">
+        <Button
+          onClick={(e) => {
+            handleSubmit(e);
+            setIsCreating(false);
+            setIsCreatingFolder(false);
+          }}
+          className="rounded-none"
+          disabled={newFileName.length < 1}
+        >
           <i
             className="pi pi-check text-gray-600 hover:text-indigo-400 text-sm"
             title="Create"
@@ -52,7 +63,7 @@ export default function NewFileForm() {
             title="Cancel"
           ></i>
         </Button>
-      </div>
+      </section>
     </div>
   );
 }

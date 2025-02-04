@@ -42,18 +42,6 @@ export const handleFileClick = (
   }
 };
 
-export const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-  if (e.key === "Escape") {
-    getAppContext().setIsCreating(false);
-    getAppContext().setIsCreatingFolder(false);
-    getAppContext().setNewFileName("");
-  }
-
-  if (e.key === "Enter") {
-    handleSubmit(e);
-  }
-};
-
 export const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   const name = getAppContext().newFileName.trim();
@@ -89,6 +77,18 @@ export const handleSubmit = async (e: React.FormEvent) => {
   } finally {
     getAppContext().setIsCreating(false);
     getAppContext().setNewFileName("");
+  }
+};
+
+export const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  if (e.key === "Escape") {
+    getAppContext().setIsCreating(false);
+    getAppContext().setIsCreatingFolder(false);
+    getAppContext().setNewFileName("");
+  }
+
+  if (e.key === "Enter") {
+    handleSubmit(e);
   }
 };
 
