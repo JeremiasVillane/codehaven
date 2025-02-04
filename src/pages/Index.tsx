@@ -7,7 +7,7 @@ import { setVisibilityControl } from "@/helpers";
 import { useIsMobile } from "@/hooks";
 import { DockLayout } from "rc-dock";
 import "rc-dock/dist/rc-dock.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export default function IndexPage() {
   const { setDockLayout, dockLayout, activePanel } = useApp();
@@ -41,7 +41,9 @@ export default function IndexPage() {
         dropMode="edge"
         style={{
           width: "100vw",
-          height: "calc(100vh - var(--header-height))",
+          height: isMobile
+            ? "calc(100vh - var(--header-height) - var(--footer-height))"
+            : "calc(100vh - var(--header-height))",
           padding: 0,
         }}
       />

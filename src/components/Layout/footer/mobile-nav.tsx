@@ -5,7 +5,7 @@ export function MobileNav() {
   const { activePanel, setActivePanel } = useApp();
 
   return (
-    <div className="fixed h-[60] bg-[#222] flex justify-around items-center text-white z-[9999] bottom-0 inset-x-0 select-none">
+    <div className="fixed h-[var(--footer-height)] bg-[#222] flex justify-around items-center text-white z-[9999] bottom-0 inset-x-0 select-none">
       {PANEL_IDS.map((panel) => (
         <button
           key={panel}

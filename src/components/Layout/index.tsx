@@ -12,6 +12,7 @@ export const defaultLayout: LayoutData = {
     children: [
       {
         mode: "vertical",
+        size: 111,
         children: [
           {
             id: "explorer",
