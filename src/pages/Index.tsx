@@ -10,11 +10,9 @@ import "rc-dock/dist/rc-dock.css";
 import { useEffect, useRef, useState } from "react";
 
 export default function IndexPage() {
-  const { setDockLayout, dockLayout } = useApp();
+  const { setDockLayout, dockLayout, activePanel } = useApp();
   const isMobile = useIsMobile();
   const layoutRef = useRef<DockLayout | null>(null);
-
-  const [activePanel, setActivePanel] = useState("preview");
 
   useEffect(() => {
     setDockLayout(layoutRef.current);
@@ -48,12 +46,7 @@ export default function IndexPage() {
         }}
       />
 
-      {isMobile && (
-        <MobileNav
-          activePanel={activePanel}
-          handleChangePanel={setActivePanel}
-        />
-      )}
+      {isMobile && <MobileNav />}
     </main>
   );
 }

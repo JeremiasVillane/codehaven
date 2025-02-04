@@ -11,8 +11,10 @@ import {
   handleBackgroundClick,
   handleFileClick,
 } from "./file-explorer-handlers";
+import { useIsMobile } from "@/hooks";
 
 export function FileExplorer() {
+  const isMobile = useIsMobile();
   const { files, currentDirectory, setCurrentDirectory } = useFiles();
 
   const {
@@ -67,7 +69,7 @@ export function FileExplorer() {
           onToggle={(e) => setExpandedKeys(e.value)}
           selectionMode="single"
           selectionKeys={selectedKey}
-          onNodeClick={(e) => handleFileClick(e.node.data)}
+          onNodeClick={(e) => handleFileClick(e.node.data, isMobile)}
           onSelectionChange={(e) => {
             setSelectedKey(e.value as string);
             if (!e.value) {

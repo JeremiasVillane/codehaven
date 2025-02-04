@@ -14,9 +14,9 @@ interface IAppContext {
   setDockLayout: (dockLayout: DockLayout) => void;
   projectName: string;
   setProjectName: (name: string) => void;
+  activePanel: string;
+  setActivePanel: (activePanel: string) => void;
   menuRef: React.RefObject<Menu>;
-  previewURL: string;
-  setPreviewURL: (url: string) => void;
   nodes: TreeNode[];
   setNodes: (nodes: TreeNode[]) => void;
   expandedKeys: { [key: string]: boolean };
@@ -52,7 +52,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     const savedName = localStorage.getItem("codehaven:project-name");
     return savedName || "Untitled project";
   });
-  const [previewURL, setPreviewURL] = useState<string>("");
+  const [activePanel, setActivePanel] = useState("preview");
+
   const [nodes, setNodes] = useState<TreeNode[]>([]);
   const [expandedKeys, setExpandedKeys] = useState<{ [key: string]: boolean }>(
     {}
@@ -71,9 +72,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setDockLayout,
     projectName,
     setProjectName,
+    activePanel,
+    setActivePanel,
     menuRef,
-    previewURL,
-    setPreviewURL,
     nodes,
     setNodes,
     expandedKeys,

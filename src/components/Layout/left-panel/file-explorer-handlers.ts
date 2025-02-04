@@ -10,18 +10,23 @@ export const handleCreateClick = (folder: boolean) => {
   getAppContext().setNewFileName("");
 };
 
-export const handleFileClick = (file: FileData & { isCreation?: boolean }) => {
+export const handleFileClick = (
+  file: FileData & { isCreation?: boolean },
+  isMobile: boolean
+) => {
   if (file?.isCreation) return;
 
   if (file.isDirectory) {
     getFileContext().setCurrentDirectory(file.id);
   } else {
     getFileContext().setCurrentFile(file);
-    const editorPanel = getAppContext().dockLayout.find("editor");
 
+    const editorPanel = getAppContext().dockLayout.find("editor");
     if (!editorPanel) return;
+
     if ((editorPanel as PanelData).tabs.find((t) => t.id === file.id)) {
       getAppContext().dockLayout.updateTab(file.id, null, true);
+      if (isMobile) getAppContext().setActivePanel("editor");
       return;
     }
 
@@ -32,6 +37,8 @@ export const handleFileClick = (file: FileData & { isCreation?: boolean }) => {
     }
 
     getAppContext().dockLayout.dockMove(newTab, "editor", "middle");
+
+    if (isMobile) getAppContext().setActivePanel("editor");
   }
 };
 
