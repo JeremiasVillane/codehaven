@@ -2,8 +2,9 @@ import { LayoutData, TabGroup } from "rc-dock";
 import { FileExplorer, FileExplorerHeader } from "./left-panel";
 import { handleCreateClick } from "./left-panel/file-explorer-handlers";
 import { DebugConsole } from "./middle-panel";
+import { CodeEditorBlank } from "./middle-panel/code-editor-blank";
 import { addTerminal } from "./middle-panel/terminal-utils";
-import { Preview } from "./right-panel";
+import { PreviewBlank } from "./right-panel/preview-blank";
 
 export const defaultLayout: LayoutData = {
   dockbox: {
@@ -33,7 +34,16 @@ export const defaultLayout: LayoutData = {
           {
             id: "editor",
             panelLock: { panelStyle: "card editor" },
-            tabs: [],
+            tabs: [
+              {
+                id: "editor-blank",
+                title: "Editor",
+                content: <CodeEditorBlank />,
+                group: "editor",
+                minWidth: 222,
+                minHeight: 33,
+              },
+            ],
             minWidth: 222,
             minHeight: 66,
           },
@@ -59,13 +69,14 @@ export const defaultLayout: LayoutData = {
         id: "preview",
         panelLock: { panelStyle: "card preview" },
         tabs: [
-          // {
-          //   title: "Preview",
-          //   content: <Preview />,
-          //   minWidth: 222,
-          //   minHeight: 66,
-          //   group: "preview",
-          // },
+          {
+            id: "preview-blank",
+            title: "Preview",
+            content: <PreviewBlank />,
+            minWidth: 222,
+            minHeight: 66,
+            group: "preview",
+          },
         ],
       },
     ],
@@ -95,7 +106,7 @@ export const groups: Record<string, TabGroup> = {
     ),
   },
   editor: {
-    floatable: true,
+    floatable: false,
     maximizable: true,
     tabLocked: true,
   },

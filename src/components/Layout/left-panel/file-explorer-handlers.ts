@@ -25,6 +25,11 @@ export const handleFileClick = (file: FileData & { isCreation?: boolean }) => {
     }
 
     const newTab = getTab(file);
+
+    if ((editorPanel as PanelData).tabs.find((t) => t.id === "editor-blank")) {
+      getAppContext().dockLayout.updateTab("editor-blank", newTab, true);
+    }
+
     getAppContext().dockLayout.dockMove(newTab, "editor", "middle");
   }
 };

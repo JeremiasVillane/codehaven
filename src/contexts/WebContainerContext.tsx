@@ -1,5 +1,7 @@
+import { Preview } from "@/components/Layout/right-panel";
 import { debugLog } from "@/helpers";
 import { webContainerService } from "@/services";
+import { PanelData } from "rc-dock";
 import {
   createContext,
   ReactNode,
@@ -8,7 +10,6 @@ import {
   useState,
 } from "react";
 import { useApp } from "./AppContext";
-import { Preview } from "@/components/Layout/right-panel";
 
 interface IWebContainerContext {
   loading: boolean;
@@ -55,18 +56,26 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
         webContainerService.onServerReady((port, url) => {
           if (!dockLayout) return;
 
-          dockLayout.dockMove(
-            {
-              id: `${port}`,
-              title: `localhost:${port}`,
-              content: <Preview previewURL={url} />,
-              group: "preview",
-              minWidth: 222,
-              minHeight: 66,
-            },
-            "preview",
-            "middle"
-          );
+          const newPreviewTab = {
+            id: `${port}`,
+            title: `localhost:${port}`,
+            content: <Preview previewURL={url} />,
+            group: "preview",
+            minWidth: 222,
+            minHeight: 66,
+          };
+
+          const previewPanel = dockLayout.find("preview");
+
+          if (
+            (previewPanel as PanelData).tabs.find(
+              (t) => t.id === "preview-blank"
+            )
+          ) {
+            dockLayout.updateTab("preview-blank", newPreviewTab, true);
+          }
+
+          dockLayout.dockMove(newPreviewTab, "preview", "middle");
         });
       } catch (error) {
         debugLog("[WEBCONTAINER] Error starting dev server:", error);
