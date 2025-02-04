@@ -21,6 +21,7 @@ export const handleFileClick = (file: FileData & { isCreation?: boolean }) => {
 
     if (!editorPanel) return;
     if ((editorPanel as PanelData).tabs.find((t) => t.id === file.id)) {
+      getAppContext().dockLayout.updateTab(file.id, null, true);
       return;
     }
 
