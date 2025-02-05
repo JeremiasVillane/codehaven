@@ -20,6 +20,7 @@ export function PreviewBlank() {
     gridTemplateRows: "1fr 1fr 1fr",
     gap: "0 0",
     gridAutoFlow: "row",
+    alignItems: "center"
   };
 
   return (
@@ -42,7 +43,7 @@ export function PreviewBlank() {
           className="text-tertiary-foreground text-right"
           style={container}
         >
-          <article className="text-sm md:text-base">
+          <article className="text-sm md:text-base leading-6">
             <div>WebContainer initialized:</div>
             {showProgress && (
               <>
@@ -59,9 +60,9 @@ export function PreviewBlank() {
             ].map((ele, idx) => (
               <div key={idx}>
                 {ele ? (
-                  <i className="pi pi-check-circle text-sm md:text-base text-green-600" />
+                  <i className="pi pi-check-circle text-xs md:text-base text-green-600" />
                 ) : (
-                  <i className="pi pi-spin pi-cog text-sm md:text-base text-indigo-600" />
+                  <i className="pi pi-spin pi-cog text-xs md:text-base text-indigo-600" />
                 )}
               </div>
             ))}
