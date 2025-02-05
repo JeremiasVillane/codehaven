@@ -56,8 +56,8 @@ export function PreviewBlank() {
             {[
               isBooted,
               ...(showProgress ? [isPopulated, isInstalled] : []),
-            ].map((ele) => (
-              <div>
+            ].map((ele, idx) => (
+              <div key={idx}>
                 {ele ? (
                   <i className="pi pi-check-circle text-sm md:text-base text-green-600" />
                 ) : (

@@ -25,7 +25,7 @@ export function PreviewHeader({
         className="rounded-none"
         disabled={previewURL.length < 1}
       >
-        <i className="pi pi-sync hover:text-indigo-400 text-sm"></i>
+        <i className="pi pi-refresh hover:text-indigo-400 text-sm"></i>
       </Button>
     </section>
   );
