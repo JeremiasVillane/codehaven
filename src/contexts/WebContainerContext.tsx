@@ -13,7 +13,7 @@ import { useApp } from "./AppContext";
 
 interface IWebContainerContext {
   isBooted: boolean;
-  error: Error | null;
+  error: string | null;
   isInstalled: boolean;
   setIsInstalled: (value: boolean) => void;
   isPopulated: boolean;
@@ -36,17 +36,16 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
   const [isBooted, setIsBooted] = useState(false);
   const [isPopulated, setIsPopulated] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const initialize = async () => {
       try {
         await webContainerService.init();
       } catch (err) {
+        debugLog("[WEBCONTAINER] Error initializing:", err?.message);
         setError(
-          err instanceof Error
-            ? err
-            : new Error("Error initializing WebContainer")
+          err instanceof Error ? err.message : "Error initializing WebContainer"
         );
       } finally {
         setIsBooted(true);

@@ -7,10 +7,10 @@ export function PreviewBlank() {
 
   useEffect(() => {
     const handleShowSeeding = () => setShowProgress(true);
-    window.addEventListener("seeding", handleShowSeeding as EventListener);
+    window.addEventListener("seeding", handleShowSeeding);
 
     return () => {
-      window.removeEventListener("seeding", handleShowSeeding as EventListener);
+      window.removeEventListener("seeding", handleShowSeeding);
     };
   }, []);
 
@@ -35,7 +35,7 @@ export function PreviewBlank() {
 
       {error ? (
         <section className="text-red-500">
-          <strong>Error:</strong> {error.message}
+          <strong>Error:</strong> {error}
         </section>
       ) : (
         <section
