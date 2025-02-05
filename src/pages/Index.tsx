@@ -2,7 +2,7 @@ import { defaultLayout, groups } from "@/components/Layout";
 import { MobileNav } from "@/components/Layout/footer";
 import { Header } from "@/components/Layout/header";
 import { PANEL_IDS } from "@/constants";
-import { useApp } from "@/contexts/AppContext";
+import { useApp } from "@/contexts";
 import { setVisibilityControl } from "@/helpers";
 import { useIsMobile } from "@/hooks";
 import { DockLayout } from "rc-dock";

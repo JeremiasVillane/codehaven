@@ -1,10 +1,10 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
-import { useApp } from "@/contexts/AppContext";
+import { useApp } from "@/contexts";
+import { sanitizeInput } from "@/helpers";
 import { cn } from "@/lib/utils";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
-import { sanitizeInput } from "@/helpers";
 
 export function Header() {
   const { projectName, setProjectName } = useApp();

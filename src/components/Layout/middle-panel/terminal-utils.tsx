@@ -1,5 +1,4 @@
-import { getAppContext } from "@/contexts/AppContext";
-import { getFileContext } from "@/contexts/FileContext";
+import { getAppContext, getFileContext } from "@/contexts";
 import { debugLog } from "@/helpers";
 import { syncService, webContainerService } from "@/services";
 import { Terminal as XTerm } from "@xterm/xterm";

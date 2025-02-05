@@ -1,4 +1,4 @@
-import { getAppContext } from "@/contexts/AppContext";
+import { getAppContext } from "@/contexts";
 import { debugLog } from "@/helpers";
 import { FileData } from "@/types";
 import { saveAs } from "file-saver";

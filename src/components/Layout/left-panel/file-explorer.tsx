@@ -1,17 +1,14 @@
+import { useExplorer, useFiles } from "@/contexts";
+import { buildPrimeTree } from "@/helpers";
+import { useIsMobile } from "@/hooks";
 import { ContextMenu } from "primereact/contextmenu";
 import { Tree, TreeDragDropEvent } from "primereact/tree";
 import { useEffect, useMemo, useRef } from "react";
-
-import { useFiles } from "@/contexts/FileContext";
-import { buildPrimeTree } from "@/helpers";
-
-import { useApp } from "@/contexts/AppContext";
 import { getContextMenuItems } from "./file-explorer-context-menu";
 import {
   handleBackgroundClick,
   handleFileClick,
 } from "./file-explorer-handlers";
-import { useIsMobile } from "@/hooks";
 
 export function FileExplorer() {
   const isMobile = useIsMobile();
@@ -27,7 +24,7 @@ export function FileExplorer() {
     expandedKeys,
     setExpandedKeys,
     setSelectedKey,
-  } = useApp();
+  } = useExplorer();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const cm = useRef<ContextMenu>(null);

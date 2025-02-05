@@ -1,5 +1,5 @@
 import { PANEL_IDS } from "@/constants";
-import { useApp } from "@/contexts/AppContext";
+import { useApp } from "@/contexts";
 
 export function MobileNav() {
   const { activePanel, setActivePanel } = useApp();

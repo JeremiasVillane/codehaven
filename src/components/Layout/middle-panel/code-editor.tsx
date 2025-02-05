@@ -1,4 +1,4 @@
-import { useFiles } from "@/contexts/FileContext";
+import { useFiles } from "@/contexts";
 import { useTheme } from "@/hooks";
 import { FileData } from "@/types";
 import Editor from "@monaco-editor/react";

@@ -1,4 +1,4 @@
-import { getFileContext } from "@/contexts/FileContext";
+import { getFileContext } from "@/contexts";
 import { zipService } from "@/services";
 import { MenuItem } from "primereact/menuitem";
 

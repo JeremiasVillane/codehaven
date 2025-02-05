@@ -1,4 +1,4 @@
-import { useFiles } from "@/contexts/FileContext";
+import { useFiles } from "@/contexts";
 
 export const CodeEditorHeader = () => {
   const { currentFile, setCurrentFile } = useFiles();

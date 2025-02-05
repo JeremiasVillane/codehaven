@@ -1,4 +1,4 @@
-import { getAppContext } from "@/contexts/AppContext";
+import { getAppContext } from "@/contexts";
 import { debugLog, getTerminalTab } from "@/helpers";
 import { dbService, webContainerService } from "@/services";
 import { TabData } from "rc-dock";

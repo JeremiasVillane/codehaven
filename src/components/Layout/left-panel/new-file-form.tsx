@@ -1,4 +1,4 @@
-import { getAppContext } from "@/contexts/AppContext";
+import { getExplorerContext } from "@/contexts";
 import { sanitizeInput } from "@/helpers";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -15,7 +15,7 @@ export default function NewFileForm() {
     setIsCreating,
     isCreatingFolder,
     setIsCreatingFolder,
-  } = getAppContext();
+  } = getExplorerContext();
 
   return (
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">

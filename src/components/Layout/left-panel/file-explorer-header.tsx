@@ -1,14 +1,14 @@
-import { getAppContext } from "@/contexts/AppContext";
+import { getExplorerContext } from "@/contexts";
 import { Button } from "primereact/button";
 import { AppMenu } from "./app-menu";
 
 export function FileExplorerHeader() {
   return (
     <section className="h-[var(--topbar-height)] w-full flex px-6 justify-between items-center bg-topbar-background text-topbar-foreground text-sm select-none">
-      <AppMenu menuRef={getAppContext().menuRef} />
+      <AppMenu menuRef={getExplorerContext().menuRef} />
       <Button
         text
-        onClick={(event) => getAppContext().menuRef.current.toggle(event)}
+        onClick={(event) => getExplorerContext().menuRef.current.toggle(event)}
         className="rounded-none"
         aria-controls="app_menu"
         aria-haspopup

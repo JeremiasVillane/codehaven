@@ -1,11 +1,10 @@
-import { getAppContext } from "@/contexts/AppContext";
-import { getFileContext } from "@/contexts/FileContext";
+import { getExplorerContext, getFileContext } from "@/contexts";
 import { debugLog } from "@/helpers";
 import { dbService } from "@/services";
 import { handleCreateClick } from "./file-explorer-handlers";
 
 export function getContextMenuItems() {
-  const appCtx = getAppContext();
+  const appCtx = getExplorerContext();
   const fileCtx = getFileContext();
   const selectedKey = appCtx.selectedKey;
   const selectedFile = fileCtx.files.find((f) => f.id === selectedKey);

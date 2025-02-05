@@ -1,13 +1,12 @@
-import { getAppContext } from "@/contexts/AppContext";
-import { getFileContext } from "@/contexts/FileContext";
+import { getAppContext, getExplorerContext, getFileContext } from "@/contexts";
 import { debugLog, findNodeByKey, getTab } from "@/helpers";
 import { FileData } from "@/types";
 import { PanelData } from "rc-dock";
 
 export const handleCreateClick = (folder: boolean) => {
-  getAppContext().setIsCreating(true);
-  getAppContext().setIsCreatingFolder(folder);
-  getAppContext().setNewFileName("");
+  getExplorerContext().setIsCreating(true);
+  getExplorerContext().setIsCreatingFolder(folder);
+  getExplorerContext().setNewFileName("");
 };
 
 export const handleFileClick = (
@@ -44,9 +43,9 @@ export const handleFileClick = (
 
 export const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  const name = getAppContext().newFileName.trim();
+  const name = getExplorerContext().newFileName.trim();
   if (!name) {
-    getAppContext().setIsCreating(false);
+    getExplorerContext().setIsCreating(false);
     return;
   }
 
@@ -54,10 +53,10 @@ export const handleSubmit = async (e: React.FormEvent) => {
     let parentIsDir = false;
     let parentId: string | null = null;
 
-    if (getAppContext().selectedKey) {
+    if (getExplorerContext().selectedKey) {
       const node = findNodeByKey(
-        getAppContext().nodes,
-        getAppContext().selectedKey
+        getExplorerContext().nodes,
+        getExplorerContext().selectedKey
       );
       const fileData = node?.data as FileData;
       if (fileData?.isDirectory) {
@@ -70,21 +69,24 @@ export const handleSubmit = async (e: React.FormEvent) => {
 
     getFileContext().setCurrentDirectory(parentIsDir ? parentId : null);
 
-    await getFileContext().createFile(name, getAppContext().isCreatingFolder);
+    await getFileContext().createFile(
+      name,
+      getExplorerContext().isCreatingFolder
+    );
     await getFileContext().loadFiles();
   } catch (error) {
     debugLog("[FILE_EXPLORER] Error creating element", error);
   } finally {
-    getAppContext().setIsCreating(false);
-    getAppContext().setNewFileName("");
+    getExplorerContext().setIsCreating(false);
+    getExplorerContext().setNewFileName("");
   }
 };
 
 export const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
   if (e.key === "Escape") {
-    getAppContext().setIsCreating(false);
-    getAppContext().setIsCreatingFolder(false);
-    getAppContext().setNewFileName("");
+    getExplorerContext().setIsCreating(false);
+    getExplorerContext().setIsCreatingFolder(false);
+    getExplorerContext().setNewFileName("");
   }
 
   if (e.key === "Enter") {
@@ -95,7 +97,7 @@ export const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 export const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
   const target = e.target as HTMLElement;
   if (target.getAttribute("data-pc-section") === "root") {
-    getAppContext().setSelectedKey(null);
+    getExplorerContext().setSelectedKey(null);
     getFileContext().setCurrentDirectory(null);
   }
 };
