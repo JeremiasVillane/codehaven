@@ -4,9 +4,9 @@ import { dbService } from "@/services";
 import { handleCreateClick } from "./file-explorer-handlers";
 
 export function getContextMenuItems() {
-  const appCtx = getExplorerContext();
+  const explorerCtx = getExplorerContext();
   const fileCtx = getFileContext();
-  const selectedKey = appCtx.selectedKey;
+  const selectedKey = explorerCtx.selectedKey;
   const selectedFile = fileCtx.files.find((f) => f.id === selectedKey);
 
   return [
@@ -26,12 +26,25 @@ export function getContextMenuItems() {
       : []),
     { separator: true },
     {
+      label: "Rename",
+      icon: "pi pi-pencil",
+      command: async () => {
+        const explorerCtx = getExplorerContext();
+        if (!explorerCtx.selectedKey) return;
+        try {
+          explorerCtx.updateNode(explorerCtx.selectedKey, { isRenaming: true });
+        } catch (err) {
+          debugLog("[FILE_EXPLORER] Error renaming", err);
+        }
+      },
+    },
+    {
       label: "Delete",
       icon: "pi pi-trash",
       command: async () => {
-        if (!appCtx.selectedKey) return;
+        if (!explorerCtx.selectedKey) return;
         try {
-          await dbService.deleteFile(appCtx.selectedKey);
+          await dbService.deleteFile(explorerCtx.selectedKey);
           await fileCtx.loadFiles();
         } catch (err) {
           debugLog("[FILE_EXPLORER] Error deleting", err);

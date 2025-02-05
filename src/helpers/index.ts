@@ -1,4 +1,5 @@
 export * from "./build-prime-tree";
+export * from "./compare-object-keys";
 export * from "./debug-log";
 export * from "./find-node-by-key";
 export * from "./get-tab";

@@ -67,7 +67,7 @@ export function Header() {
         <InputText
           ref={inputRef}
           value={newFileName}
-          onChange={(e) => sanitizeInput(e, setNewFileName)}
+          onChange={(e) => sanitizeInput(e.target.value, setNewFileName)}
           onKeyDown={handleKeyDown}
           onBlur={() => setIsEditingName(false)}
           maxLength={66}

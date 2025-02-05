@@ -1,4 +1,4 @@
-import { debugLog } from "@/helpers";
+import { compareObjectKeys, debugLog } from "@/helpers";
 import { initializeProjectIfEmpty } from "@/seed/seeder";
 import { dbService, syncService, webContainerService } from "@/services";
 import { FileData } from "@/types";
@@ -17,7 +17,7 @@ interface IFileContext {
   currentDirectory: string | null;
   importFiles: (files: FileList) => Promise<void>;
   createFile: (name: string, isDirectory: boolean) => Promise<void>;
-  updateFileContent: (id: string, content: string) => Promise<void>;
+  updateFile: (id: string, newData: Partial<FileData>) => Promise<void>;
   setCurrentFile: (file: FileData | null) => void;
   setCurrentDirectory: (dirId: string | null) => void;
   deleteFile: (id: string) => Promise<void>;
@@ -94,15 +94,15 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     await loadFiles();
   };
 
-  const updateFileContent = async (id: string, newContent: string) => {
+  const updateFile = async (id: string, newData: Partial<FileData>) => {
     const file = await dbService.getFile(id);
     if (!file) return;
-    if (file.content === newContent) return;
+    if (compareObjectKeys(file, newData)) return;
 
     if (file) {
       const updatedFile = {
         ...file,
-        content: newContent,
+        ...newData,
         updatedAt: Date.now(),
       };
       await dbService.saveFile(updatedFile);
@@ -250,7 +250,7 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     currentDirectory,
     importFiles,
     createFile,
-    updateFileContent,
+    updateFile,
     setCurrentFile,
     setCurrentDirectory,
     deleteFile,

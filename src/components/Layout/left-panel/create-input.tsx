@@ -1,11 +1,11 @@
-import { getExplorerContext } from "@/contexts";
+import { useExplorer } from "@/contexts";
 import { sanitizeInput } from "@/helpers";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useRef } from "react";
 import { handleKeyDown, handleSubmit } from "./file-explorer-handlers";
 
-export default function NewFileForm() {
+export default function CreateInput() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -15,7 +15,7 @@ export default function NewFileForm() {
     setIsCreating,
     isCreatingFolder,
     setIsCreatingFolder,
-  } = getExplorerContext();
+  } = useExplorer();
 
   return (
     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
@@ -28,7 +28,7 @@ export default function NewFileForm() {
         <InputText
           ref={inputRef}
           value={newFileName}
-          onChange={(e) => sanitizeInput(e, setNewFileName)}
+          onChange={(e) => sanitizeInput(e.target.value, setNewFileName)}
           onKeyDown={handleKeyDown}
           placeholder={isCreatingFolder ? "Folder name" : "filename.ext"}
           maxLength={33}

@@ -1,4 +1,4 @@
-import NewFileForm from "@/components/Layout/left-panel/new-file-form";
+import CreateInput from "@/components/Layout/left-panel/create-input";
 import { getExplorerContext, getFileContext } from "@/contexts";
 import { FileData } from "@/types";
 import { TreeNode } from "primereact/treenode";
@@ -41,7 +41,7 @@ export function buildPrimeTree(files: FileData[]): TreeNode[] {
           label: "",
           data: {
             isCreation: true,
-            creationElement: <NewFileForm />,
+            creationElement: <CreateInput />,
           },
           leaf: true,
           selectable: false,
@@ -53,7 +53,7 @@ export function buildPrimeTree(files: FileData[]): TreeNode[] {
         label: "",
         data: {
           isCreation: true,
-          creationElement: <NewFileForm />,
+          creationElement: <CreateInput />,
         },
         leaf: true,
         selectable: false,

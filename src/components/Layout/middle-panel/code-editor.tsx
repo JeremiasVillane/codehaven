@@ -13,7 +13,7 @@ import editorOptions from "./code-editor-options";
 
 export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   const { theme } = useTheme();
-  const { updateFileContent } = useFiles();
+  const { updateFile } = useFiles();
   const [currentTheme, setCurrentTheme] = useState<"vs-dark" | "vs-light">(
     `vs-${theme}`
   );
@@ -28,13 +28,13 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      updateFileContent(selectedFile.id, editorValue);
+      updateFile(selectedFile.id, { content: editorValue });
     }, 500);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [editorValue, selectedFile.id, updateFileContent]);
+  }, [editorValue, selectedFile.id, updateFile]);
 
   useEffect(() => {
     const handleThemeChange = (e: CustomEvent<"light" | "dark">) => {

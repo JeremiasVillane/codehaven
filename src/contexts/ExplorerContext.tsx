@@ -6,6 +6,7 @@ interface IExplorerContext {
   menuRef: React.RefObject<Menu>;
   nodes: TreeNode[];
   setNodes: (nodes: TreeNode[]) => void;
+  updateNode: (nodeId: string, newData: Record<string, any>) => void;
   expandedKeys: { [key: string]: boolean };
   setExpandedKeys: (keys: { [key: string]: boolean }) => void;
   selectedKey: string | null;
@@ -43,10 +44,21 @@ export const ExplorerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isCreatingFolder, setIsCreatingFolder] = useState(false);
   const [newFileName, setNewFileName] = useState("");
 
+  const updateNode = (nodeId: string, newData: Record<string, any>) => {
+    setNodes((prevNodes) =>
+      prevNodes.map((node) =>
+        node.data && node.data.id === nodeId
+          ? { ...node, data: { ...node.data, ...newData } }
+          : node
+      )
+    );
+  };
+
   const value = {
     menuRef,
     nodes,
     setNodes,
+    updateNode,
     expandedKeys,
     setExpandedKeys,
     selectedKey,

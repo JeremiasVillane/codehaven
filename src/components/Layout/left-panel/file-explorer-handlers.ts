@@ -10,10 +10,10 @@ export const handleCreateClick = (folder: boolean) => {
 };
 
 export const handleFileClick = (
-  file: FileData & { isCreation?: boolean },
+  file: FileData & { isCreation?: boolean; isRenaming?: boolean },
   isMobile: boolean
 ) => {
-  if (file?.isCreation) return;
+  if (file?.isCreation || file?.isRenaming) return;
 
   if (file.isDirectory) {
     getFileContext().setCurrentDirectory(file.id);
@@ -92,6 +92,20 @@ export const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
   if (e.key === "Enter") {
     handleSubmit(e);
   }
+};
+
+export const handleRename = (
+  newName: string,
+  originalName: string,
+  fileId: string,
+  oldPath: string
+) => {
+  if (!newName || newName === originalName) return;
+
+  const parts = oldPath.split("/");
+  parts.pop();
+  const newPath = parts.length ? parts.join("/") + "/" + newName : newName;
+  getFileContext().updateFile(fileId, { name: newName, path: newPath });
 };
 
 export const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {

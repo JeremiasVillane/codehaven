@@ -8,15 +8,17 @@ import { getContextMenuItems } from "./file-explorer-context-menu";
 import {
   handleBackgroundClick,
   handleFileClick,
+  handleRename,
 } from "./file-explorer-handlers";
+import RenameInput from "./rename-input";
 
 export function FileExplorer() {
   const isMobile = useIsMobile();
   const { files, currentDirectory, setCurrentDirectory } = useFiles();
-
   const {
     nodes,
     setNodes,
+    updateNode,
     isCreating,
     isCreatingFolder,
     newFileName,
@@ -38,12 +40,33 @@ export function FileExplorer() {
     setNodes(memoizedTree);
   }, [memoizedTree, setNodes]);
 
-  const nodeTemplate = (node: any) => {
-    if (node.data?.isCreation) {
-      return node.data.creationElement;
-    }
-    return node.label;
-  };
+  const nodeTemplate = useMemo(
+    () => (node: any) => {
+      if (node.data?.isCreation) {
+        return node.data.creationElement;
+      }
+      if (node.data?.isRenaming) {
+        return (
+          <RenameInput
+            initialValue={node.label ?? ""}
+            onConfirm={(newName) =>
+              handleRename(
+                newName,
+                node.label ?? "",
+                node.data.id,
+                node.data.path
+              )
+            }
+            onCancel={() => {
+              updateNode(selectedKey, { isRenaming: false });
+            }}
+          />
+        );
+      }
+      return node.label;
+    },
+    [nodes]
+  );
 
   useEffect(() => {
     if (isCreating && inputRef.current) {
