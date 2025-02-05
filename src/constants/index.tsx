@@ -7,6 +7,7 @@ import {
   TeenyiconsJavascriptOutline,
   TeenyiconsSvelteOutline,
 } from "@/assets";
+import { PhFileLight } from "@/assets/BlankIcon";
 import { UitVuejsAlt } from "@/assets/VueIcon";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +24,7 @@ export const TEMPLATES = [
     id: "blank",
     title: "Blank",
     description: "Start with a blank project.",
-    icon: <PhFileCodeLight className={cn(iconStyle, "size-12")} />,
+    icon: <PhFileLight className={cn(iconStyle, "size-12")} />,
     tech: [],
   },
   {
@@ -81,14 +82,14 @@ export const TEMPLATES = [
     title: "Vue/JavaScript",
     description:
       "Start a new Vue project with JavaScript for dynamic web applications.",
-    icon: <UitVuejsAlt className={iconStyle} />,
+    icon: <UitVuejsAlt className={cn(iconStyle, "size-11")} />,
     tech: ["Vue", "JavaScript"],
   },
   {
     id: "vue-ts",
     title: "Vue/TypeScript",
     description: "Build type-safe Vue applications with TypeScript support.",
-    icon: <UitVuejsAlt className={iconStyle} />,
+    icon: <UitVuejsAlt className={cn(iconStyle, "size-11")} />,
     tech: ["Vue", "TypeScript"],
   },
   {

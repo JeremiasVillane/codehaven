@@ -1,4 +1,4 @@
-<img src="public/android-chrome-192x192.png" />
+<img src="public/codehaven-light.png" />
 
 # CodeHaven
 

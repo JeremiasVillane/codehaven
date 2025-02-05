@@ -1,5 +1,5 @@
 export const initialFiles = {
-  "README.md": `# CodeHaven CRUD Example
+  "README.md": `# CRUD Example
 
 A full-stack TypeScript application demonstrating basic CRUD operations with a React frontend and Express backend.
 
@@ -342,14 +342,13 @@ app.get("/", (_req, res) => {
     <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <title>CodeHaven: Basic CRUD Server Example</title>
+        <title>CBasic CRUD Server Example</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 2rem; background-color: white }
           button { padding: 0.5rem 1rem; font-size: 1rem; cursor: pointer; }
         </style>
       </head>
       <body>
-        <h1>CodeHaven</h1>
         <h2>Basic CRUD Server Example</h2>
         <p>This is a basic example of a CRUD application.</p>
         <button onclick="window.location.href='/items'">View Items</button>
@@ -773,7 +772,6 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold mb-6 text-center">CodeHaven</h1>
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold mb-6">Basic CRUD Client Example</h2>
 
