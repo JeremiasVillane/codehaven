@@ -9,7 +9,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <AppProvider>
       <WebContainerProvider>
         <FileProvider>
-          <ExplorerProvider> {children}</ExplorerProvider>
+          <ExplorerProvider>{children}</ExplorerProvider>
         </FileProvider>
       </WebContainerProvider>
     </AppProvider>
