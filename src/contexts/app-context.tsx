@@ -8,6 +8,8 @@ interface IAppContext {
   setProjectName: (name: string) => void;
   activePanel: string;
   setActivePanel: (activePanel: string) => void;
+  showTemplateModal: boolean;
+  setShowTemplateModal: (showTemplateModal: boolean) => void;
 }
 
 const AppContext = createContext<IAppContext | null>(null);
@@ -30,6 +32,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     return savedName || "Untitled project";
   });
   const [activePanel, setActivePanel] = useState("preview");
+  const [showTemplateModal, setShowTemplateModal] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("codehaven:project-name", projectName);
@@ -42,6 +45,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setProjectName,
     activePanel,
     setActivePanel,
+    showTemplateModal,
+    setShowTemplateModal,
   };
   externalContext = value;
 

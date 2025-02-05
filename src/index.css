@@ -225,9 +225,9 @@
   @apply hover:bg-accent bg-popover h-10 text-[0.88rem];
 }
 
-/*** Dock extra buttons ***/
-.dock-extra-content > div {
-  @apply flex items-center w-full gap-2 px-6 mt-2 text-tertiary-foreground;
+/*** Dialog ***/
+.p-dialog-content {
+  @apply bg-[#f5f5f5] dark:bg-[#04050b];
 }
 
 /********* MONACO OVERRIDE STYLES *********/
@@ -399,4 +399,9 @@ div[class="dock-tab-btn"][role="tab"][aria-selected="true"]:is(.dark *) {
 .dock-panel.dock-style-debug .dock-tab:is(.dark *) {
   background-color: hsl(240, 6%, 10%);
   border: none;
+}
+
+/*** Dock extra buttons ***/
+.dock-extra-content > div {
+  @apply flex items-center w-full gap-2 px-6 mt-2 text-tertiary-foreground;
 }

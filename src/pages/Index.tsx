@@ -8,9 +8,11 @@ import { useIsMobile } from "@/hooks";
 import { DockLayout } from "rc-dock";
 import "rc-dock/dist/rc-dock.css";
 import { useEffect, useRef } from "react";
+import { TemplateModal } from "@/common/template-modal";
 
 export default function IndexPage() {
-  const { setDockLayout, dockLayout, activePanel } = useApp();
+  const { setDockLayout, dockLayout, activePanel, showTemplateModal } =
+    useApp();
   const isMobile = useIsMobile();
   const layoutRef = useRef<DockLayout | null>(null);
 
@@ -49,6 +51,7 @@ export default function IndexPage() {
       />
 
       {isMobile && <MobileNav />}
+      {showTemplateModal && <TemplateModal />}
     </main>
   );
 }

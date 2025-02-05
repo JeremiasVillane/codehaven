@@ -1,4 +1,4 @@
-import { getFileContext } from "@/contexts";
+import { getAppContext, getFileContext } from "@/contexts";
 import { zipService } from "@/services";
 import { MenuItem } from "primereact/menuitem";
 
@@ -7,9 +7,11 @@ export const items: MenuItem[] = [
     label: "Project",
     items: [
       {
-        label: "New",
+        label: "New...",
         icon: "pi pi-plus",
-        command: async () => await getFileContext().clearFiles(),
+        command: async () => {
+          getAppContext().setShowTemplateModal(true);
+        },
       },
       {
         label: "Export...",

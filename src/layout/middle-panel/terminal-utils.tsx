@@ -55,7 +55,7 @@ export async function startShell(
   }
 }
 
-export function addTerminal() {
+export function addTerminal(commands?: string[]) {
   const dockLayout = getAppContext().dockLayout;
   if (!dockLayout) return;
 
@@ -67,7 +67,7 @@ export function addTerminal() {
   const newTerminal: TabData = {
     id: `terminal${numOfTerminals + 1}`,
     title: `Terminal ${numOfTerminals + 1}`,
-    content: <Terminal />,
+    content: <Terminal {...{ commands }} />,
     group: "debug",
     cached: true,
     closable: true,
