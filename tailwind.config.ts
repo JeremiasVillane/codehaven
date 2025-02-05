@@ -72,6 +72,9 @@ export default {
           background: "hsl(var(--editor-background))",
           foreground: "hsl(var(--editor-foreground))",
         },
+        terminal: {
+          background: "hsl(var(--terminal-background))",
+        },
         preview: {
           background: "hsl(var(--preview-background))",
           foreground: "hsl(var(--preview-foreground))",

@@ -1,6 +1,6 @@
-import { defaultLayout, groups } from "@/components/Layout";
-import { MobileNav } from "@/components/Layout/footer";
-import { Header } from "@/components/Layout/header";
+import { defaultLayout, groups } from "@/layout";
+import { MobileNav } from "@/layout/footer";
+import { Header } from "@/layout/header";
 import { PANEL_IDS } from "@/constants";
 import { useApp } from "@/contexts";
 import { setVisibilityControl } from "@/helpers";

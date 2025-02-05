@@ -1,4 +1,4 @@
-import CreateInput from "@/components/Layout/left-panel/create-input";
+import CreateInput from "@/layout/left-panel/create-input";
 import { getExplorerContext, getFileContext } from "@/contexts";
 import { FileData } from "@/types";
 import { TreeNode } from "primereact/treenode";

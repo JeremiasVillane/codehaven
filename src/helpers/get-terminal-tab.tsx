@@ -1,4 +1,4 @@
-import { Terminal } from "@/components/Layout/middle-panel";
+import { Terminal } from "@/layout/middle-panel";
 
 export function getTerminalTab({
   id,

@@ -52,6 +52,7 @@ export const defaultLayout: LayoutData = {
             id: "debug",
             activeId: "terminal",
             panelLock: { panelStyle: "debug" },
+            size: 77,
             tabs: [
               {
                 id: "console",

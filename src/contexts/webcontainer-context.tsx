@@ -1,5 +1,5 @@
-import { Preview } from "@/components/Layout/right-panel";
 import { debugLog } from "@/helpers";
+import { Preview } from "@/layout/right-panel";
 import { webContainerService } from "@/services";
 import { PanelData } from "rc-dock";
 import {
@@ -9,7 +9,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useApp } from "./AppContext";
+import { useApp } from "./app-context";
 
 interface IWebContainerContext {
   isBooted: boolean;

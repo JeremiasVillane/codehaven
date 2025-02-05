@@ -1,8 +1,8 @@
 import React from "react";
-import { AppProvider } from "./AppContext";
-import { ExplorerProvider } from "./ExplorerContext";
-import { FileProvider } from "./FileContext";
-import { WebContainerProvider } from "./WebContainerContext";
+import { AppProvider } from "./app-context";
+import { ExplorerProvider } from "./explorer-context";
+import { FileProvider } from "./file-context";
+import { WebContainerProvider } from "./webcontainer-context";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

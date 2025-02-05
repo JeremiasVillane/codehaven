@@ -79,7 +79,7 @@ export function Terminal({ commands }: { commands?: string[] }) {
         overflow: "hidden",
       }}
     >
-      <div ref={terminalRef} className="size-full bg-background" />
+      <div ref={terminalRef} className="size-full bg-terminal-background" />
     </div>
   );
 }
