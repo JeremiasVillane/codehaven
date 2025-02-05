@@ -19,6 +19,7 @@ class SyncService {
       "package-lock.json",
       "yarn.lock",
       "pnpm-lock.yaml",
+      ".angular"
     ]);
 
     // Function to normalize the path (removing the initial slash)

@@ -1,27 +1,39 @@
 export const nodeStarter = {
   "package.json": `{
-  "name": "node-starter",
-  "private": true,
+  "name": "nodejs-express-starter",
+  "version": "1.0.0",
+  "description": "A simple Node.js starter project",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \\"Error: no test specified\\" && exit 1"
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   }
 }
-`,
-  "package-lock.json": `{
-  "name": "node-starter",
-  "lockfileVersion": 3,
-  "requires": true,
-  "packages": {
-    "": {
-      "name": "node-starter"
-    }
-  }
-}
-`,
-  "index.js": `// run \`node index.js\` in the terminal
 
-console.log(\`Hello Node.js v\${process.versions.node}!\`);
 `,
-  ".gitignore": `node_modules
+  "server.js": `const express = require('express');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => {
+  res.send('Hello, world!');
+});
+
+app.listen(port, () => {
+  console.log(\`Server is running on http://localhost:\${port}\`);
+});
+`,
+  ".env": `PORT=3000
 `,
 };

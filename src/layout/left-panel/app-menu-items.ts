@@ -7,8 +7,8 @@ export const items: MenuItem[] = [
     label: "Project",
     items: [
       {
-        label: "New...",
-        icon: "pi pi-plus",
+        label: "New project...",
+        icon: "pi pi-file-plus",
         command: async () => {
           getAppContext().setShowTemplateModal(true);
         },

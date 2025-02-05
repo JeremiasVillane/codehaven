@@ -1,10 +1,13 @@
 import {
+  CatppuccinNext,
   CibReact,
   FileIconsTypescript,
   MdiNodejs,
   PhFileCodeLight,
   TeenyiconsJavascriptOutline,
+  TeenyiconsSvelteOutline,
 } from "@/assets";
+import { UitVuejsAlt } from "@/assets/VueIcon";
 import { cn } from "@/lib/utils";
 
 export const PANEL_IDS = ["explorer", "editor", "debug", "preview"];
@@ -16,6 +19,13 @@ export const MAX_LOGS = 100;
 
 const iconStyle = "size-10 text-indigo-500";
 export const TEMPLATES = [
+  {
+    id: "blank",
+    title: "Blank",
+    description: "Start with a blank project.",
+    icon: <PhFileCodeLight className={cn(iconStyle, "size-12")} />,
+    tech: [],
+  },
   {
     id: "react-js",
     title: "React/JavaScript",
@@ -32,11 +42,11 @@ export const TEMPLATES = [
     tech: ["React", "TypeScript"],
   },
   {
-    id: "node-starter",
-    title: "Node.js",
-    description: "Create server-side applications with Node.js.",
-    icon: <MdiNodejs className={cn(iconStyle, "size-12")} />,
-    tech: ["Node.js"],
+    id: "next-starter",
+    title: "Next.js",
+    description: "Create server-rendered React applications with Next.js.",
+    icon: <CatppuccinNext className={iconStyle} />,
+    tech: ["React", "Next.js"],
   },
   {
     id: "vanilla-js",
@@ -58,5 +68,42 @@ export const TEMPLATES = [
     description: "Create static websites with HTML, CSS, and JavaScript.",
     icon: <PhFileCodeLight className={cn(iconStyle, "size-12")} />,
     tech: ["HTML", "CSS", "JavaScript"],
+  },
+  {
+    id: "node-starter",
+    title: "Node.js/Express",
+    description: "Create server-side applications with Node.js and Express.",
+    icon: <MdiNodejs className={cn(iconStyle, "size-12")} />,
+    tech: ["Node.js", "Express"],
+  },
+  {
+    id: "vue-js",
+    title: "Vue/JavaScript",
+    description:
+      "Start a new Vue project with JavaScript for dynamic web applications.",
+    icon: <UitVuejsAlt className={iconStyle} />,
+    tech: ["Vue", "JavaScript"],
+  },
+  {
+    id: "vue-ts",
+    title: "Vue/TypeScript",
+    description: "Build type-safe Vue applications with TypeScript support.",
+    icon: <UitVuejsAlt className={iconStyle} />,
+    tech: ["Vue", "TypeScript"],
+  },
+  {
+    id: "svelte-js",
+    title: "Svelte/JavaScript",
+    description:
+      "Start a new Svelte project with JavaScript for dynamic web applications.",
+    icon: <TeenyiconsSvelteOutline className={iconStyle} />,
+    tech: ["Svelte", "JavaScript"],
+  },
+  {
+    id: "svelte-ts",
+    title: "Svelte/TypeScript",
+    description: "Build type-safe Svelte applications with TypeScript support.",
+    icon: <TeenyiconsSvelteOutline className={iconStyle} />,
+    tech: ["Svelte", "TypeScript"],
   },
 ] as const;
