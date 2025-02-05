@@ -1,12 +1,12 @@
 export const initialFiles = {
   "README.md": `# CodeHaven Features Demo
 
-A simple full-stack TypeScript application showcasing CodeHaven's core features with a React frontend and Express backend.
+A simple full-stack application showcasing CodeHaven's core features with a plain HTML/CSS/JS frontend and an Express backend.
 
 ## Project Structure
 
 \`\`\`
-├── client/          # React frontend with feature showcase
+├── client/          # Plain HTML/CSS/JS frontend with feature showcase
 └── server/          # Express API serving features data
 \`\`\`
 
@@ -27,43 +27,41 @@ cd server && npm run dev
 cd client && npm run dev
 \`\`\`
 
-Frontend will be available at http://localhost:5173
+Frontend will be available at http://localhost:8080
 Backend API at http://localhost:3000
 `,
   server: {
     "package.json": `{
-      "name": "codehaven-demo-server",
-      "version": "1.0.0",
-      "main": "dist/server.js",
-      "scripts": {
-        "dev": "ts-node-dev --respawn src/server.ts",
-        "build": "tsc",
-        "start": "node dist/server.js"
-      },
-      "dependencies": {
-        "cors": "^2.8.5",
-        "express": "^4.18.2"
-      },
-      "devDependencies": {
-        "@types/cors": "^2.8.17",
-        "@types/express": "^4.17.21",
-        "ts-node-dev": "^2.0.0",
-        "typescript": "^5.4.2"
-      }
-    }`,
-
+  "name": "codehaven-demo-server",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.2"
+  }
+}`,
     "tsconfig.json": `{
-      "compilerOptions": {
-        "target": "ES2020",
-        "module": "CommonJS",
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "strict": true,
-        "esModuleInterop": true
-      },
-      "include": ["src"]
-    }`,
-
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true
+  },
+  "include": ["src"]
+}`,
     src: {
       "server.ts": `import express from 'express';
 import cors from 'cors';
@@ -126,248 +124,205 @@ app.listen(PORT, () => {
 
   client: {
     "package.json": `{
-      "name": "codehaven-demo-client",
-      "private": true,
-      "version": "0.0.0",
-      "type": "module",
-      "scripts": {
-        "dev": "vite",
-        "build": "tsc && vite build",
-        "preview": "vite preview"
-      },
-      "dependencies": {
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0"
-      },
-      "devDependencies": {
-        "@types/react": "^18.2.64",
-        "@types/react-dom": "^18.2.21",
-        "@vitejs/plugin-react": "^4.2.1",
-        "autoprefixer": "^10.4.18",
-        "postcss": "^8.4.35",
-        "tailwindcss": "^3.4.1",
-        "typescript": "^5.4.2",
-        "vite": "^5.1.5"
-      }
-    }`,
-    src: {
-      "App.tsx": `import { useEffect, useState } from 'react';
-
-interface Feature {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-}
-
-function App() {
-  const [features, setFeatures] = useState<Feature[]>([]);
-  const [filter, setFilter] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('http://localhost:3000/api/features')
-      .then(res => res.json())
-      .then(data => {
-        setFeatures(data);
-        setIsLoading(false);
-      });
-  }, []);
-
-  const categories = ['all', 'editor', 'tools', 'preview'];
-  const filteredFeatures = features.filter(
-    f => filter === 'all' || f.category === filter
-  );
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to CodeHaven
-          </h1>
-          <p className="text-lg text-gray-600">
-            Explore our powerful features for web development in the browser
-          </p>
-        </div>
-
-        <div className="flex justify-center gap-4 mb-8">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={\`px-4 py-2 rounded-lg \${
-                filter === cat
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
-              }\`}
-            >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        {isLoading ? (
-          <div className="text-center text-gray-600">Loading features...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredFeatures.map(feature => (
-              <div
-                key={feature.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-                <span className="inline-block mt-4 px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm">
-                  {feature.category}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export default App;`,
-      "main.tsx": `import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);`,
-
-      "index.css": `@tailwind base;
-@tailwind components;
-@tailwind utilities;`,
-    },
-    "vite.config.ts": `import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  optimizeDeps: {
-    exclude: ['lucide-react'],
+  "name": "codehaven-demo-client",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "live-server ./src"
   },
-});
-`,
-    "tsconfig.app.json": `{
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src"]
-}
-`,
-    "tsconfig.json": `{
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
-}
-`,
-    "tsconfig.node.json": `{
-  "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2023"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["vite.config.ts"]
-}
-`,
-    "tailwind.config.js": `export default {
-      content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
-      theme: {
-        extend: {},
-      },
-      plugins: [],
-    }`,
-    "postcss.config.js": `export default {
-      plugins: {
-        tailwindcss: {},
-        autoprefixer: {},
-      },
-    }`,
-    "eslint.config.js": `import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
-
-export default tseslint.config(
-  { ignores: ['dist'] },
-  {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
-    },
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-    },
+  "devDependencies": {
+    "live-server": "^1.2.2"
   }
-);
-`,
-    "index.html": `<!DOCTYPE html>
+}`,
+    src: {
+      "index.html": `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CodeHaven Features</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="app"></div>
+    <script src="main.js"></script>
   </body>
 </html>`,
+      "style.css": `/* CSS reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #F9FAFB;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #1F2937;
+  margin-bottom: 10px;
+}
+
+.header p {
+  font-size: 1.125rem;
+  color: #4B5563;
+}
+
+.filter-buttons {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.filter-button {
+  padding: 10px 16px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 8px;
+  background-color: white;
+  color: #4B5563;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+  background-color: #F3F4F6;
+}
+
+.filter-button.active {
+  background-color: #4F46E5;
+  color: white;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+}
+
+.feature-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.25rem;
+  color: #1F2937;
+}
+
+.feature-card p {
+  color: #4B5563;
+}
+
+.badge {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 5px 10px;
+  background-color: #EEF2FF;
+  color: #4F46E5;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}`,
+      "main.js": `let features = [];
+let currentFilter = 'all';
+const categories = ['all', 'editor', 'tools', 'preview'];
+
+function renderApp() {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  
+  const container = document.createElement('div');
+  container.className = 'container';
+  
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'header';
+  const h1 = document.createElement('h1');
+  h1.textContent = 'Welcome to CodeHaven';
+  headerDiv.appendChild(h1);
+  const p = document.createElement('p');
+  p.textContent = 'Explore our powerful features for web development in the browser';
+  headerDiv.appendChild(p);
+  container.appendChild(headerDiv);
+  
+  const filterDiv = document.createElement('div');
+  filterDiv.className = 'filter-buttons';
+  categories.forEach(cat => {
+    const button = document.createElement('button');
+    button.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    button.className = 'filter-button' + (currentFilter === cat ? ' active' : '');
+    button.addEventListener('click', () => {
+      currentFilter = cat;
+      renderApp();
+    });
+    filterDiv.appendChild(button);
+  });
+  container.appendChild(filterDiv);
+  
+  const featuresDiv = document.createElement('div');
+  featuresDiv.className = 'features-grid';
+  const filteredFeatures = features.filter(feature => currentFilter === 'all' || feature.category === currentFilter);
+  
+  filteredFeatures.forEach(feature => {
+    const card = document.createElement('div');
+    card.className = 'feature-card';
+    
+    const title = document.createElement('h3');
+    title.textContent = feature.title;
+    card.appendChild(title);
+    
+    const description = document.createElement('p');
+    description.textContent = feature.description;
+    card.appendChild(description);
+    
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = feature.category;
+    card.appendChild(badge);
+    
+    featuresDiv.appendChild(card);
+  });
+  
+  container.appendChild(featuresDiv);
+  app.appendChild(container);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const app = document.getElementById('app');
+  app.innerHTML = '<p>Loading features...</p>';
+  
+  fetch('http://localhost:3000/api/features')
+    .then(response => response.json())
+    .then(data => {
+      features = data;
+      renderApp();
+    })
+    .catch(error => {
+      console.error('Error fetching features:', error);
+      app.innerHTML = '<p>Error loading features.</p>';
+    });
+});`,
+    },
   },
 };
