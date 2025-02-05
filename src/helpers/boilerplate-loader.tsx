@@ -1,14 +1,15 @@
-import flattenInitialFiles from "@/seed/builder";
-import { debugLog } from "./debug-log";
+import { TEMPLATES } from "@/constants";
 import {
   getAppContext,
   getFileContext,
   getWebContainerContext,
 } from "@/contexts";
-import { dbService, webContainerService } from "@/services";
 import { defaultLayout } from "@/layout";
 import { addTerminal } from "@/layout/middle-panel/terminal-utils";
+import flattenInitialFiles from "@/seed/builder";
+import { dbService, webContainerService } from "@/services";
 import { boilerplates } from "@/templates";
+import { debugLog } from "./debug-log";
 
 export async function boilerplateLoader(templateId: string) {
   try {
@@ -55,7 +56,11 @@ export async function boilerplateLoader(templateId: string) {
       }
     }
 
-    debugLog("[BOILERPLATE_LOADER] Template initialized successfully.");
+    debugLog(
+      `[BOILERPLATE_LOADER] ${
+        TEMPLATES.find((t) => t.id === templateId).title
+      } template initialized successfully.`
+    );
     getFileContext().loadFiles();
     getWebContainerContext().setIsPopulated(true);
 

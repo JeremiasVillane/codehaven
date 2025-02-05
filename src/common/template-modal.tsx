@@ -8,7 +8,6 @@ export function TemplateModal() {
 
   const handleSelectTemplate = async (templateId: string) => {
     setShowTemplateModal(false);
-
     await boilerplateLoader(templateId);
   };
 
