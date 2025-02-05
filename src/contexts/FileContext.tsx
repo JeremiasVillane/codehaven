@@ -55,10 +55,6 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  // useEffect(() => {
-  //   loadFiles();
-  // }, [currentDirectory, loadFiles]);
-
   useEffect(() => {
     (async () => {
       try {

@@ -12,25 +12,31 @@ import {
 import { useApp } from "./AppContext";
 
 interface IWebContainerContext {
-  loading: boolean;
+  isBooted: boolean;
   error: Error | null;
   isInstalled: boolean;
   setIsInstalled: (value: boolean) => void;
+  isPopulated: boolean;
+  setIsPopulated: (value: boolean) => void;
 }
 
 const WebContainerContext = createContext<IWebContainerContext>({
-  loading: true,
+  isBooted: true,
   error: null,
   isInstalled: false,
   setIsInstalled: () => {},
+  isPopulated: false,
+  setIsPopulated: () => {},
 });
+let externalContext: IWebContainerContext | null = null;
 
 export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
   const { dockLayout } = useApp();
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const [isBooted, setIsBooted] = useState(false);
+  const [isPopulated, setIsPopulated] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const initialize = async () => {
@@ -43,7 +49,7 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
             : new Error("Error initializing WebContainer")
         );
       } finally {
-        setLoading(false);
+        setIsBooted(true);
       }
     };
 
@@ -56,26 +62,30 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
         webContainerService.onServerReady((port, url) => {
           if (!dockLayout) return;
 
-          const newPreviewTab = {
-            id: `${port}`,
-            title: `localhost:${port}`,
-            content: <Preview previewURL={url} />,
-            group: "preview",
-            minWidth: 222,
-            minHeight: 66,
-          };
+          setIsInstalled(true);
 
-          const previewPanel = dockLayout.find("preview");
+          setTimeout(() => {
+            const newPreviewTab = {
+              id: `${port}`,
+              title: `localhost:${port}`,
+              content: <Preview previewURL={url} />,
+              group: "preview",
+              minWidth: 222,
+              minHeight: 66,
+            };
 
-          if (
-            (previewPanel as PanelData).tabs.find(
-              (t) => t.id === "preview-blank"
-            )
-          ) {
-            dockLayout.updateTab("preview-blank", newPreviewTab, true);
-          }
+            const previewPanel = dockLayout.find("preview");
 
-          dockLayout.dockMove(newPreviewTab, "preview", "middle");
+            if (
+              (previewPanel as PanelData).tabs.find(
+                (t) => t.id === "preview-blank"
+              )
+            ) {
+              dockLayout.updateTab("preview-blank", newPreviewTab, true);
+            }
+
+            dockLayout.dockMove(newPreviewTab, "preview", "middle");
+          }, 1000);
         });
       } catch (error) {
         debugLog("[WEBCONTAINER] Error starting dev server:", error);
@@ -83,18 +93,25 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [dockLayout]);
 
+  const value = {
+    isBooted,
+    error,
+    isInstalled,
+    setIsInstalled,
+    isPopulated,
+    setIsPopulated,
+  };
+  externalContext = value;
+
   return (
-    <WebContainerContext.Provider
-      value={{
-        loading,
-        error,
-        isInstalled,
-        setIsInstalled,
-      }}
-    >
+    <WebContainerContext.Provider value={value}>
       {children}
     </WebContainerContext.Provider>
   );
 };
 
 export const useWebContainer = () => useContext(WebContainerContext);
+export const getWebContainerContext = () => {
+  if (!externalContext) throw new Error("Context not initialized");
+  return externalContext;
+};

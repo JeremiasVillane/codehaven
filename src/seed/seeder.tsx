@@ -1,4 +1,4 @@
-import { getAppContext } from "@/contexts";
+import { getAppContext, getWebContainerContext } from "@/contexts";
 import { debugLog, getTerminalTab } from "@/helpers";
 import { dbService, webContainerService } from "@/services";
 import { TabData } from "rc-dock";
@@ -12,6 +12,8 @@ export async function initializeProjectIfEmpty(): Promise<void> {
       debugLog(
         "[PROJECT INITIALIZER] IndexedDB is empty. Seeding initial files..."
       );
+
+      window.dispatchEvent(new CustomEvent("seeding"));
 
       const filesToInsert = flattenInitialFiles(initialFiles);
 
@@ -46,6 +48,7 @@ export async function initializeProjectIfEmpty(): Promise<void> {
         }
       }
       debugLog("[PROJECT INITIALIZER] Project initialized successfully.");
+      getWebContainerContext().setIsPopulated(true);
 
       const dockLayout = getAppContext().dockLayout;
       const terminals: TabData[] = ["server", "client"].map((folder, idx) =>
