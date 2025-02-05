@@ -12,9 +12,11 @@ An online IDE that provides a modern development environment in your browser.
 - 💻 Interactive terminal with command execution
 - 🗄️ In-browser server using **WebContainer API**
 - 💾 Local file storage with **IndexedDB** persistence
-- 🎯 Real-time preview with auto-refresh
+- 📦 Project export/import powered by **JSZip**  
+- 🔄 Real-time preview with auto-refresh
 - 🌙 Light/Dark theme support
 - ⚡ Fast and responsive UI powered by **React**
+- 📑 Templates for bootstrapping new projects
 
 ## Tech Stack
 
@@ -23,23 +25,16 @@ An online IDE that provides a modern development environment in your browser.
 - **React 18** with **TypeScript**
 - **PrimeReact UI** components
 - **rc-dock** for panel layout
-- **Monaco Editor** for code editing
+- **Monaco Editor** for advanced code editing
 - **xterm.js** for terminal emulation
 - **Tailwind CSS** for styling
 
-### Core Features
+### Build Tools & Linting
 
-- **WebContainer API** for in-browser server
-- **IndexedDB** for file storage
-- **File System API** integration
-- **JSZip** for project export/import
-
-### Build Tools
-
-- Vite
-- PostCSS
-- ESLint
-- SWC
+- **Vite** as the development server and bundler
+- **PostCSS** for CSS processing
+- **ESLint** for code quality and consistency
+- **SWC** for fast builds and transforms
 
 ## Installation
 
@@ -61,4 +56,4 @@ pnpm install
 pnpm dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. Open your browser and navigate to `http://localhost:8080`
