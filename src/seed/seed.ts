@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(error => {
       console.error('Error fetching features:', error);
-      app.innerHTML = '<p>Error loading features.</p>';
+      app.innerHTML = '<p>The server is not yet available. Please refresh this page when the server is up.</p>';
     });
 });`,
     },

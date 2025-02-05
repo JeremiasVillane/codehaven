@@ -274,12 +274,12 @@
   border-top: none;
 }
 
-.dock-content-holder {
+/* .dock-content-holder {
   background-color: #f5f5f5;
 }
 .dock-content-holder:is(.dark *) {
   background-color: #04050b;
-}
+} */
 
 .dock-ink-bar {
   background-color: rgb(146, 113, 180);
