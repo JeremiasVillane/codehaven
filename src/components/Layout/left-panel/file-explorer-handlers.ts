@@ -1,6 +1,14 @@
 import { getAppContext, getExplorerContext, getFileContext } from "@/contexts";
-import { debugLog, findNodeByKey, getTab } from "@/helpers";
+import {
+  buildFileDataFromTree,
+  debugLog,
+  findNodeByKey,
+  getTab,
+  updatePaths,
+} from "@/helpers";
+import { dbService } from "@/services";
 import { FileData } from "@/types";
+import { TreeDragDropEvent } from "primereact/tree";
 import { PanelData } from "rc-dock";
 
 export const handleCreateClick = (folder: boolean) => {
@@ -114,4 +122,19 @@ export const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     getExplorerContext().setSelectedKey(null);
     getFileContext().setCurrentDirectory(null);
   }
+};
+
+export const onDragDrop = async (event: TreeDragDropEvent) => {
+  updatePaths(event.value);
+  getExplorerContext().setNodes(event.value);
+
+  const newFileData = buildFileDataFromTree(event.value);
+
+  for (const file of newFileData) {
+    if (!file.parentId) {
+      file.parentId = null;
+    }
+    await dbService.saveFile(file);
+  }
+  await getFileContext().loadFiles();
 };

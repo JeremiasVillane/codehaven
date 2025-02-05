@@ -1,3 +1,4 @@
+export * from "./build-filedata-from-tree";
 export * from "./build-prime-tree";
 export * from "./compare-object-keys";
 export * from "./debug-log";
@@ -6,3 +7,4 @@ export * from "./get-tab";
 export * from "./get-terminal-tab";
 export * from "./sanitize-input";
 export * from "./set-visibility-control";
+export * from "./update-paths";

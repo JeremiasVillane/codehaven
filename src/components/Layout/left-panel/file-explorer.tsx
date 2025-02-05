@@ -2,13 +2,14 @@ import { useExplorer, useFiles } from "@/contexts";
 import { buildPrimeTree } from "@/helpers";
 import { useIsMobile } from "@/hooks";
 import { ContextMenu } from "primereact/contextmenu";
-import { Tree, TreeDragDropEvent } from "primereact/tree";
+import { Tree } from "primereact/tree";
 import { useEffect, useMemo, useRef } from "react";
 import { getContextMenuItems } from "./file-explorer-context-menu";
 import {
   handleBackgroundClick,
   handleFileClick,
   handleRename,
+  onDragDrop,
 } from "./file-explorer-handlers";
 import RenameInput from "./rename-input";
 
@@ -73,10 +74,6 @@ export function FileExplorer() {
       inputRef.current.focus();
     }
   }, [isCreating]);
-
-  const onDragDrop = (event: TreeDragDropEvent) => {
-    setNodes(event.value);
-  };
 
   return (
     <>
