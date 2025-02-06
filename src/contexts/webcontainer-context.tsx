@@ -1,7 +1,7 @@
 import { debugLog } from "@/helpers";
 import { Preview } from "@/layout/right-panel";
 import { webContainerService } from "@/services";
-import { PanelData } from "rc-dock";
+import { PanelData, TabData } from "rc-dock";
 import {
   createContext,
   ReactNode,
@@ -64,11 +64,12 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
           setIsInstalled(true);
 
           setTimeout(() => {
-            const newPreviewTab = {
+            const newPreviewTab: TabData = {
               id: `${port}`,
               title: `localhost:${port}`,
               content: <Preview previewURL={url} />,
               group: "preview",
+              cached: true,
               minWidth: 222,
               minHeight: 66,
             };

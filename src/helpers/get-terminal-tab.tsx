@@ -1,4 +1,5 @@
 import { Terminal } from "@/layout/middle-panel";
+import { TabData } from "rc-dock";
 
 export function getTerminalTab({
   id,
@@ -8,7 +9,7 @@ export function getTerminalTab({
   id: string;
   title: string;
   commands?: string[];
-}) {
+}): TabData {
   return {
     id,
     title,
