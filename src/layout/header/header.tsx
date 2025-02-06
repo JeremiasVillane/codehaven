@@ -83,7 +83,7 @@ export function Header() {
           onClick={initializeProjectTerminals}
           className={cn(
             "primary-button",
-            "text-indigo-600 md:dark:text-white md:text-gray-600 h-6 px-0.5 md:px-3 text-xs md:text-sm flex items-center gap-2 bg-transparent dark:bg-transparent hover:bg-transparent dark:hover:bg-transparent shadow-none md:shadow-sm md:bg-indigo-700 md:dark:bg-indigo-900 md:dark:hover:bg-indigo-800 mr-1 md:mr-10",
+            "text-indigo-600 md:text-white h-6 px-0.5 md:px-3 text-xs md:text-sm flex items-center gap-2 bg-transparent dark:bg-transparent hover:bg-transparent dark:hover:bg-transparent shadow-none md:shadow-sm md:bg-indigo-700 md:dark:bg-indigo-900 md:hover:bg-indigo-600 md:dark:hover:bg-indigo-800 mr-1 md:mr-10",
             isEditingName ? "hidden" : ""
           )}
           disabled={files.length < 1}
