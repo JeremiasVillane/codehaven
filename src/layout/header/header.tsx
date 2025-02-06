@@ -79,7 +79,10 @@ export function Header() {
           value={newFileName}
           onChange={(e) => sanitizeInput(e.target.value, setNewFileName)}
           onKeyDown={handleKeyDown}
-          onBlur={() => setIsEditingName(false)}
+          onBlur={() => {
+            setIsEditingName(false);
+            setNewFileName(projectName);
+          }}
           maxLength={66}
           className="text-center text-base text-foreground h-6"
         />
