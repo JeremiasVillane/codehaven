@@ -6,10 +6,13 @@ import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
 import { Button } from "primereact/button";
+import { useIsMobile } from "@/hooks";
 
 export function Header() {
   const { files } = useFiles();
   const { projectName, setProjectName } = useApp();
+  const isMobile = useIsMobile();
+
   const [isEditingName, setIsEditingName] = useState(false);
   const [newFileName, setNewFileName] = useState<string>(projectName);
 
@@ -38,7 +41,12 @@ export function Header() {
 
   return (
     <header className="flex items-center justify-between py-2 px-3 md:px-6 bg-header-background select-none w-full h-[var(--header-height)]">
-      <h1 className="flex items-center gap-2 group relative">
+      <h1
+        className={cn(
+          "flex items-center gap-2 group relative",
+          isMobile && isEditingName ? "hidden" : ""
+        )}
+      >
         <img
           src="/codehaven-logo.png"
           width="21rem"
