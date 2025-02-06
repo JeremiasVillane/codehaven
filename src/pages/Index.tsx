@@ -1,20 +1,31 @@
-import { defaultLayout, groups } from "@/layout";
-import { MobileNav } from "@/layout/footer";
-import { Header } from "@/layout/header";
-import { PANEL_IDS } from "@/constants";
+import { SettingsModal } from "@/common/settings-modal";
+import { TemplateModal } from "@/common/template-modal";
+import { DEFAULT_SETTINGS, PANEL_IDS } from "@/constants";
 import { useApp } from "@/contexts";
 import { setVisibilityControl } from "@/helpers";
 import { useIsMobile } from "@/hooks";
+import { defaultLayout, groups } from "@/layout";
+import { MobileNav } from "@/layout/footer";
+import { Header } from "@/layout/header";
 import { DockLayout } from "rc-dock";
 import "rc-dock/dist/rc-dock.css";
 import { useEffect, useRef } from "react";
-import { TemplateModal } from "@/common/template-modal";
 
 export default function IndexPage() {
-  const { setDockLayout, dockLayout, activePanel, showTemplateModal } =
-    useApp();
+  const {
+    setDockLayout,
+    dockLayout,
+    activePanel,
+    showTemplateModal,
+    showSettingsModal,
+  } = useApp();
   const isMobile = useIsMobile();
   const layoutRef = useRef<DockLayout | null>(null);
+
+  const editorSettings = () => {
+    const stored = localStorage.getItem("codehaven:editor-settings");
+    return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
+  };
 
   useEffect(() => {
     setDockLayout(layoutRef.current);
@@ -52,6 +63,7 @@ export default function IndexPage() {
 
       {isMobile && <MobileNav />}
       {showTemplateModal && <TemplateModal />}
+      {showSettingsModal && <SettingsModal settings={editorSettings()} />}
     </main>
   );
 }

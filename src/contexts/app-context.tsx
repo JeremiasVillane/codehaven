@@ -3,13 +3,15 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface IAppContext {
   dockLayout: DockLayout;
-  setDockLayout: (dockLayout: DockLayout) => void;
+  setDockLayout: (val: DockLayout) => void;
   projectName: string;
-  setProjectName: (name: string) => void;
+  setProjectName: (val: string) => void;
   activePanel: string;
-  setActivePanel: (activePanel: string) => void;
+  setActivePanel: (val: string) => void;
   showTemplateModal: boolean;
-  setShowTemplateModal: (showTemplateModal: boolean) => void;
+  setShowTemplateModal: (val: boolean) => void;
+  showSettingsModal: boolean;
+  setShowSettingsModal: (val: boolean) => void;
 }
 
 const AppContext = createContext<IAppContext | null>(null);
@@ -33,6 +35,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   });
   const [activePanel, setActivePanel] = useState("preview");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("codehaven:project-name", projectName);
@@ -47,6 +50,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setActivePanel,
     showTemplateModal,
     setShowTemplateModal,
+    showSettingsModal,
+    setShowSettingsModal,
   };
   externalContext = value;
 

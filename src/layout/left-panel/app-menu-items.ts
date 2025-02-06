@@ -45,6 +45,9 @@ export const items: MenuItem[] = [
       {
         label: "Settings",
         icon: "pi pi-cog",
+        command: async () => {
+          getAppContext().setShowSettingsModal(true);
+        },
       },
     ],
   },

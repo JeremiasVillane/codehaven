@@ -1,4 +1,12 @@
+import { EditorSettings } from "@/types";
 import * as monaco from "monaco-editor";
+
+export const persistSettings = (newSettings: EditorSettings) => {
+  localStorage.setItem(
+    "codehaven:editor-settings",
+    JSON.stringify(newSettings)
+  );
+};
 
 export const getLanguage = (filename: string) => {
   if (!filename || filename.length < 1) return;

@@ -1,0 +1,142 @@
+import { useApp } from "@/contexts";
+import { persistSettings } from "@/layout/middle-panel/code-editor-helpers";
+import { EditorSettings } from "@/types";
+import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { SelectButton } from "primereact/selectbutton";
+import { useEffect, useState } from "react";
+
+export function SettingsModal({ settings }: { settings: EditorSettings }) {
+  const { showSettingsModal, setShowSettingsModal } = useApp();
+  const [localSettings, setLocalSettings] = useState<EditorSettings>(settings);
+
+  useEffect(() => {
+    setLocalSettings(settings);
+  }, [settings]);
+
+  const handleNumberChange = (field: keyof EditorSettings, value: string) => {
+    const numValue =
+      field === "lineHeight" ? parseFloat(value) : parseInt(value);
+    if (!isNaN(numValue)) {
+      setLocalSettings((prev) => ({ ...prev, [field]: numValue }));
+    }
+  };
+
+  const handleToggleChange = (field: keyof EditorSettings) => {
+    setLocalSettings((prev) => ({
+      ...prev,
+      [field]: prev[field] === "on" ? "off" : "on",
+    }));
+  };
+
+  const handleSave = () => {
+    persistSettings(localSettings);
+    const { persistStorage, ...rest } = localSettings;
+
+    window.dispatchEvent(
+      new CustomEvent("editorSettingsChange", { detail: rest })
+    );
+    setShowSettingsModal(false);
+  };
+
+  return (
+    <Dialog
+      header={
+        <header>
+          <div className="flex items-center gap-2.5 text-foreground">
+            <i className="pi pi-sliders-h text-lg" />
+            Editor Settings
+          </div>
+        </header>
+      }
+      headerClassName="p-3 bg-sidebar-background"
+      visible={showSettingsModal}
+      onHide={() => {
+        if (!showSettingsModal) return;
+        setShowSettingsModal(false);
+      }}
+      resizable={false}
+      className="w-[90vw] md:w-[26rem]"
+    >
+      <article>
+        <div className="space-y-6 py-4">
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-foreground">Editor</h3>
+            <div className="grid gap-4 text-muted-foreground">
+              <div className="grid grid-cols-3 items-center gap-4 ">
+                <label htmlFor="fontSize">Font Size</label>
+                <InputText
+                  id="fontSize"
+                  type="number"
+                  min={8}
+                  max={32}
+                  value={String(localSettings.fontSize)}
+                  onChange={(e) =>
+                    handleNumberChange("fontSize", e.target.value)
+                  }
+                  className="col-span-2"
+                />
+              </div>
+              <div className="grid grid-cols-3 items-center gap-4">
+                <label htmlFor="lineHeight">Line Height</label>
+                <InputText
+                  id="lineHeight"
+                  type="number"
+                  min={1}
+                  max={2}
+                  step={0.1}
+                  value={String(localSettings.lineHeight)}
+                  onChange={(e) =>
+                    handleNumberChange("lineHeight", e.target.value)
+                  }
+                  className="col-span-2"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="wordWrap">Word Wrap</label>
+                <SelectButton
+                  id="wordWrap"
+                  value={localSettings.wordWrap}
+                  onChange={() => handleToggleChange("wordWrap")}
+                  options={["on", "off"]}
+                  className="custom-select"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-tertiary/10 h-0.5" />
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-foreground">Application</h3>
+            <div className="flex items-center justify-between text-muted-foreground">
+              <label htmlFor="persistStorage">
+                Persist files using IndexedDB
+              </label>
+              <SelectButton
+                id="persistStorage"
+                value={localSettings.persistStorage}
+                onChange={() => handleToggleChange("persistStorage")}
+                options={["on", "off"]}
+                className="custom-select"
+              />
+            </div>
+          </div>
+        </div>
+
+        <footer className="flex items-center gap-3 mt-3">
+          <Button
+            className="secondary-button"
+            onClick={() => setShowSettingsModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button className="primary-button" onClick={handleSave}>
+            Save changes
+          </Button>
+        </footer>
+      </article>
+    </Dialog>
+  );
+}

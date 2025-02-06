@@ -35,3 +35,10 @@ export interface CodeHavenDB extends DBSchema {
     indexes: { "by-parent": string };
   };
 }
+
+export type EditorSettings = {
+  fontSize: number;
+  lineHeight: number;
+  wordWrap: "on" | "off";
+  persistStorage: "on" | "off";
+};

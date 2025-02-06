@@ -132,7 +132,10 @@
   }
 
   .primary-button {
-    @apply bg-indigo-900 hover:bg-indigo-800 active:scale-95 text-background px-3 py-1 flex items-center justify-center text-sm h-8 rounded-sm shadow-md;
+    @apply bg-indigo-900 hover:bg-indigo-800 active:scale-95 text-white px-3 py-1 flex items-center justify-center text-sm h-8 rounded-[3.6px] shadow-md;
+  }
+  .secondary-button {
+    @apply bg-background border border-indigo-900 dark:border-tertiary hover:bg-indigo-900 text-indigo-800 dark:text-tertiary dark:hover:text-white dark:hover:border-indigo-900 active:bg-indigo-900 active:scale-95 hover:text-white active:text-white px-3 py-1 flex items-center justify-center text-sm h-8 rounded-[3.6px] shadow-md;
   }
 
   input {
@@ -228,6 +231,11 @@
 /*** Dialog ***/
 .p-dialog-content {
   @apply bg-[#fafafa] dark:bg-[#151519];
+}
+
+/*** Select Button ***/
+.custom-select .p-button.p-component {
+  @apply h-7 px-3 shadow text-sm;
 }
 
 /********* MONACO OVERRIDE STYLES *********/

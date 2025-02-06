@@ -1,6 +1,7 @@
+import { DEFAULT_SETTINGS } from "@/constants";
 import { useFiles } from "@/contexts";
 import { useTheme } from "@/hooks";
-import { FileData } from "@/types";
+import { EditorSettings, FileData } from "@/types";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +9,7 @@ import {
   getLanguage,
   handleBeforeMount,
   handleEditorDidMount,
+  persistSettings,
 } from "./code-editor-helpers";
 import editorOptions from "./code-editor-options";
 
@@ -17,10 +19,41 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   const [currentTheme, setCurrentTheme] = useState<"vs-dark" | "vs-light">(
     `vs-${theme}`
   );
-
   const [editorValue, setEditorValue] = useState(selectedFile.content);
+  const [currentSettings, setCurrentSettings] = useState<EditorSettings>(() => {
+    const stored = localStorage.getItem("codehaven:editor-settings");
+    return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
+  });
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.updateOptions(currentSettings);
+    }
+  }, [editorRef, currentSettings]);
+
+  useEffect(() => {
+    const updateSettingsEvent = (e: CustomEvent<EditorSettings>) => {
+      setCurrentSettings(e.detail);
+      if (editorRef.current) {
+        editorRef.current.updateOptions(e.detail);
+      }
+
+      persistSettings(e.detail);
+    };
+
+    window.addEventListener(
+      "editorSettingsChange",
+      updateSettingsEvent as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        "editorSettingsChange",
+        updateSettingsEvent as EventListener
+      );
+    };
+  }, []);
 
   useEffect(() => {
     setEditorValue(selectedFile.content);
@@ -38,13 +71,12 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
 
   useEffect(() => {
     const handleThemeChange = (e: CustomEvent<"light" | "dark">) => {
-      if (!editorRef.current) return;
       setCurrentTheme(`vs-${e.detail}`);
     };
 
     monaco.editor.setTheme(`vs-${theme}`);
-
     window.addEventListener("themeChange", handleThemeChange as EventListener);
+
     return () => {
       window.removeEventListener(
         "themeChange",
@@ -68,7 +100,7 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
           setEditorValue(value);
         }
       }}
-      options={editorOptions}
+      options={{ ...editorOptions, ...currentSettings }}
     />
   );
 };

@@ -10,6 +10,7 @@ import {
 import { PhFileLight } from "@/assets/BlankIcon";
 import { UitVuejsAlt } from "@/assets/VueIcon";
 import { cn } from "@/lib/utils";
+import { EditorSettings } from "@/types";
 
 export const PANEL_IDS = ["explorer", "editor", "debug", "preview"];
 
@@ -17,6 +18,13 @@ export const DB_NAME = "codehaven";
 export const DB_VERSION = 1;
 
 export const MAX_LOGS = 100;
+
+export const DEFAULT_SETTINGS: EditorSettings = {
+  fontSize: 14,
+  lineHeight: 1.5,
+  wordWrap: "on",
+  persistStorage: "on",
+};
 
 const iconStyle = "size-10 text-indigo-500";
 export const TEMPLATES = [
