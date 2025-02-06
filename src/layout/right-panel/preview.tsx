@@ -23,7 +23,6 @@ export function Preview({ previewURL }: { previewURL: string }) {
         src={previewURL}
         className="w-full h-full border-none"
         sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-        allow="cross-origin-isolated"
       />
     </div>
   );
