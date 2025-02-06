@@ -5,6 +5,7 @@ import {
   getWebContainerContext,
 } from "@/contexts";
 import { defaultLayout } from "@/layout";
+import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 import { addTerminal } from "@/layout/middle-panel/terminal-utils";
 import flattenInitialFiles from "@/seed/builder";
 import { dbService, webContainerService } from "@/services";
@@ -14,8 +15,9 @@ import { debugLog } from "./debug-log";
 export async function boilerplateLoader(templateId: string) {
   try {
     const { template, commands } = boilerplates[templateId];
+    const { autoRunStartupScript } = getEditorSettings();
 
-    if (!!commands && commands.length > 1) {
+    if (!!commands && commands.length > 1 && autoRunStartupScript === "on") {
       window.dispatchEvent(new CustomEvent("seeding"));
     }
 
@@ -64,7 +66,7 @@ export async function boilerplateLoader(templateId: string) {
     getFileContext().loadFiles();
     getWebContainerContext().setIsPopulated(true);
 
-    addTerminal(commands);
+    if (autoRunStartupScript === "on") addTerminal(commands);
   } catch (error) {
     debugLog("Error loading boilerplate:", error);
     console.error(error);
