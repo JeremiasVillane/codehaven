@@ -12,7 +12,7 @@ export const defaultLayout: LayoutData = {
     children: [
       {
         mode: "vertical",
-        size: 111,
+        size: 88,
         children: [
           {
             id: "explorer",
@@ -121,7 +121,7 @@ export const groups: Record<string, TabGroup> = {
         <i
           role="button"
           title="New terminal"
-          onClick={addTerminal}
+          onClick={() => addTerminal()}
           className="pi pi-plus hover:text-indigo-400 -mr-3"
         ></i>
       </div>

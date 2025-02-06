@@ -13,7 +13,7 @@ export function TemplateModal() {
 
   return (
     <Dialog
-      headerClassName="p-3 bg-terminal-background"
+      headerClassName="p-3 bg-sidebar-background"
       visible={showTemplateModal}
       onHide={() => {
         if (!showTemplateModal) return;
@@ -21,10 +21,10 @@ export function TemplateModal() {
       }}
       resizable={false}
     >
-      <article className="sm:max-w-[900px] bg-terminal-background">
+      <article className="sm:max-w-[900px] bg-sidebar-background">
         <div className="space-y-6">
           <section>
-            <h2 className="text-2xl font-bold tracking-tight">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">
               Choose a template
             </h2>
             <p className="text-muted-foreground">
@@ -36,11 +36,11 @@ export function TemplateModal() {
             {TEMPLATES.map((template) => (
               <div
                 key={template.id}
-                className="relative p-6 rounded-lg border bg-card transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
+                className="relative p-6 rounded-lg border bg-header-background transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer"
                 onClick={() => handleSelectTemplate(template.id)}
               >
                 {template.icon}
-                <h3 className="text-lg font-semibold mb-2">{template.title}</h3>
+                <h3 className="text-lg font-semibold mb-2 text-foreground">{template.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {template.description}
                 </p>

@@ -227,7 +227,7 @@
 
 /*** Dialog ***/
 .p-dialog-content {
-  @apply bg-[#f5f5f5] dark:bg-[#04050b];
+  @apply bg-[#fafafa] dark:bg-[#151519];
 }
 
 /********* MONACO OVERRIDE STYLES *********/

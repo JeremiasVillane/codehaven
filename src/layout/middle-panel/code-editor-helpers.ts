@@ -26,13 +26,94 @@ export const getLanguage = (filename: string) => {
     case "yaml":
     case "yml":
       return "yaml";
+    case "vue":
+      return "vue";
+    case "svelte":
+      return "svelte";
     default:
       return "plaintext";
   }
 };
-export const handleBeforeMount = (monaco: any) => {
-  monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+
+export const handleBeforeMount = (monacoInstance: any) => {
+  monacoInstance.languages.typescript.typescriptDefaults.setCompilerOptions({
     jsx: "react",
+  });
+
+  monacoInstance.languages.register({ id: "vue" });
+  monacoInstance.languages.setMonarchTokensProvider("vue", {
+    defaultToken: "",
+    tokenPostfix: ".vue",
+    tokenizer: {
+      root: [
+        [
+          /(<template\b[^>]*>)/,
+          { token: "tag", next: "@template", nextEmbedded: "html" },
+        ],
+        [
+          /(<script\b[^>]*>)/,
+          { token: "tag", next: "@script", nextEmbedded: "javascript" },
+        ],
+        [
+          /(<style\b[^>]*>)/,
+          { token: "tag", next: "@style", nextEmbedded: "css" },
+        ],
+        [/.+/, ""],
+      ],
+      template: [
+        [
+          /(<\/template>)/,
+          { token: "tag", next: "@pop", nextEmbedded: "@pop" },
+        ],
+        [/.+/, ""],
+      ],
+      script: [
+        [/(<\/script>)/, { token: "tag", next: "@pop", nextEmbedded: "@pop" }],
+        [/.+/, ""],
+      ],
+      style: [
+        [/(<\/style>)/, { token: "tag", next: "@pop", nextEmbedded: "@pop" }],
+        [/.+/, ""],
+      ],
+    },
+  });
+
+  monacoInstance.languages.register({ id: "svelte" });
+  monacoInstance.languages.setMonarchTokensProvider("svelte", {
+    defaultToken: "",
+    tokenPostfix: ".svelte",
+    tokenizer: {
+      root: [
+        [
+          /(<script\b[^>]*>)/,
+          { token: "tag", next: "@script", nextEmbedded: "javascript" },
+        ],
+        [
+          /(<\/?[\w-]+(?:\s+[\w-]+(?:=(?:"[^"]*"|'[^']*'|[^\s'">=]+))?)*\s*\/?>)/,
+          { token: "tag", next: "@template", nextEmbedded: "html" },
+        ],
+        [
+          /(<style\b[^>]*>)/,
+          { token: "tag", next: "@style", nextEmbedded: "css" },
+        ],
+        [/.+/, ""],
+      ],
+      template: [
+        [
+          /(<\/template>)/,
+          { token: "tag", next: "@pop", nextEmbedded: "@pop" },
+        ],
+        [/.+/, ""],
+      ],
+      script: [
+        [/(<\/script>)/, { token: "tag", next: "@pop", nextEmbedded: "@pop" }],
+        [/.+/, ""],
+      ],
+      style: [
+        [/(<\/style>)/, { token: "tag", next: "@pop", nextEmbedded: "@pop" }],
+        [/.+/, ""],
+      ],
+    },
   });
 };
 
