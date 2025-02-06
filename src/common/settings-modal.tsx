@@ -130,12 +130,12 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
             {Object.entries({
               persistStorage: "Persist files using IndexedDB",
               autoRunStartupScript: "Auto run startup script on boot",
-            }).map(([setting, title], idx) => (
+            }).map(([setting, desc], idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-between text-muted-foreground"
               >
-                <label htmlFor={setting}>{title}</label>
+                <label htmlFor={setting} className="w-2/3">{desc}</label>
                 <SelectButton
                   id={setting}
                   value={localSettings[setting]}
