@@ -40,6 +40,7 @@ export type EditorSettings = {
   fontSize: number;
   lineHeight: number;
   wordWrap: "on" | "off";
+  minimap: { enabled: boolean };
   persistStorage: "on" | "off";
   autoRunStartupScript: "on" | "off";
 };

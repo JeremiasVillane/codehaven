@@ -4,16 +4,21 @@ import { dbService, webContainerService } from "@/services";
 import { TabData } from "rc-dock";
 import flattenInitialFiles from "./builder";
 import { initialFiles } from "./seed";
+import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 
 export async function initializeProjectIfEmpty(): Promise<void> {
   try {
     const existingFiles = await dbService.getAllFiles();
     if (existingFiles.length === 0) {
+      const { autoRunStartupScript } = getEditorSettings();
+
       debugLog(
         "[PROJECT INITIALIZER] IndexedDB is empty. Seeding initial files..."
       );
 
-      window.dispatchEvent(new CustomEvent("seeding"));
+      if (autoRunStartupScript) {
+        window.dispatchEvent(new CustomEvent("seeding"));
+      }
 
       const filesToInsert = flattenInitialFiles(initialFiles);
 
@@ -50,16 +55,18 @@ export async function initializeProjectIfEmpty(): Promise<void> {
       debugLog("[PROJECT INITIALIZER] Project initialized successfully.");
       getWebContainerContext().setIsPopulated(true);
 
-      const dockLayout = getAppContext().dockLayout;
-      const terminals: TabData[] = ["server", "client"].map((folder, idx) =>
-        getTerminalTab({
-          id: `terminal${idx + 1}`,
-          title: `Terminal ${idx + 1}`,
-          commands: [`cd ./${folder}`, "npm i", "npm run dev"],
-        })
-      );
+      if (autoRunStartupScript) {
+        const dockLayout = getAppContext().dockLayout;
+        const terminals: TabData[] = ["server", "client"].map((folder, idx) =>
+          getTerminalTab({
+            id: `terminal${idx + 1}`,
+            title: `Terminal ${idx + 1}`,
+            commands: [`cd ./${folder}`, "npm i", "npm run dev"],
+          })
+        );
 
-      terminals.map((t) => dockLayout.dockMove(t, "debug", "middle"));
+        terminals.map((t) => dockLayout.dockMove(t, "debug", "middle"));
+      }
     } else {
       const dockLayout = getAppContext().dockLayout;
       dockLayout.dockMove(

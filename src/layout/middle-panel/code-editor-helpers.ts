@@ -1,5 +1,11 @@
+import { DEFAULT_SETTINGS } from "@/constants";
 import { EditorSettings } from "@/types";
 import * as monaco from "monaco-editor";
+
+export const getEditorSettings = (): EditorSettings => {
+  const stored = localStorage.getItem("codehaven:editor-settings");
+  return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
+};
 
 export const persistSettings = (newSettings: EditorSettings) => {
   localStorage.setItem(

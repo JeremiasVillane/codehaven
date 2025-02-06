@@ -105,6 +105,21 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
                   className="custom-select"
                 />
               </div>
+              <div className="flex items-center justify-between">
+                <label htmlFor="minimap">Minimap</label>
+                <SelectButton
+                  id="minimap"
+                  value={localSettings?.minimap?.enabled ? "on" : "off"}
+                  onChange={(e) => {
+                    setLocalSettings((prev) => ({
+                      ...prev,
+                      minimap: { enabled: e.value === "on" },
+                    }));
+                  }}
+                  options={["on", "off"]}
+                  className="custom-select"
+                />
+              </div>
             </div>
           </div>
 
@@ -115,8 +130,11 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
             {Object.entries({
               persistStorage: "Persist files using IndexedDB",
               autoRunStartupScript: "Auto run startup script on boot",
-            }).map(([setting, title]) => (
-              <div className="flex items-center justify-between text-muted-foreground">
+            }).map(([setting, title], idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between text-muted-foreground"
+              >
                 <label htmlFor={setting}>{title}</label>
                 <SelectButton
                   id={setting}
