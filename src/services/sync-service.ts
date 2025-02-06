@@ -1,3 +1,4 @@
+import { IGNORED_PATHS } from "@/constants";
 import { debugLog } from "@/helpers";
 import { FileData } from "@/types";
 import { v4 as uuidv4 } from "uuid";
@@ -7,19 +8,6 @@ import { webContainerService } from "./webcontainer-service";
 class SyncService {
   async syncContainerToDB(): Promise<void> {
     const filesInContainer = await webContainerService.readAllFiles();
-
-    const IGNORED_PATHS = new Set([
-      "node_modules",
-      ".git",
-      "dist",
-      "build",
-      ".cache",
-      "coverage",
-      ".DS_Store",
-      "package-lock.json",
-      "yarn.lock",
-      "pnpm-lock.yaml",
-    ]);
 
     // Function to normalize the path (removing the initial slash)
     const normalizePath = (p: string) => (p.startsWith("/") ? p.slice(1) : p);

@@ -19,6 +19,19 @@ export const DB_VERSION = 1;
 
 export const MAX_LOGS = 100;
 
+export const IGNORED_PATHS = new Set([
+  "node_modules",
+  ".git",
+  "dist",
+  "build",
+  ".cache",
+  "coverage",
+  ".DS_Store",
+  "package-lock.json",
+  "yarn.lock",
+  "pnpm-lock.yaml",
+]);
+
 export const DEFAULT_SETTINGS: EditorSettings = {
   fontSize: 14,
   lineHeight: 1.5,

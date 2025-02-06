@@ -1,3 +1,4 @@
+import { IGNORED_PATHS } from "@/constants";
 import { getAppContext, getFileContext } from "@/contexts";
 import { zipService } from "@/services";
 import { MenuItem } from "primereact/menuitem";
@@ -30,7 +31,17 @@ export const items: MenuItem[] = [
             const e = event as unknown as React.ChangeEvent<HTMLInputElement>;
             if (!e.target.files?.length) return;
 
-            await getFileContext().importFiles(e.target.files);
+            const filteredFiles = Array.from(e.target.files).filter((file) => {
+              const pathParts = file.webkitRelativePath.split("/");
+              return !pathParts.some((part) => IGNORED_PATHS.has(part));
+            });
+
+            if (filteredFiles.length === 0) return;
+
+            const dataTransfer = new DataTransfer();
+            filteredFiles.forEach((file) => dataTransfer.items.add(file));
+
+            await getFileContext().importFiles(dataTransfer.files);
           };
           document.body.appendChild(input);
           input.click();
