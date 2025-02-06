@@ -1,5 +1,9 @@
 import { useApp } from "@/contexts";
-import { persistSettings } from "@/layout/middle-panel/code-editor-helpers";
+import { deepEqual } from "@/helpers";
+import {
+  getEditorSettings,
+  persistSettings,
+} from "@/layout/middle-panel/code-editor-helpers";
 import { EditorSettings } from "@/types";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -159,7 +163,11 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
           >
             Cancel
           </Button>
-          <Button className="primary-button" onClick={handleSave}>
+          <Button
+            className="primary-button"
+            onClick={handleSave}
+            disabled={deepEqual(localSettings, getEditorSettings())}
+          >
             Save changes
           </Button>
         </footer>
