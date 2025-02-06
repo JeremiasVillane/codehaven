@@ -125,6 +125,10 @@ export const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
 };
 
 export const onDragDrop = async (event: TreeDragDropEvent) => {
+  if (event.dropNode && !event.dropNode.data?.isDirectory) {
+    return;
+  }
+
   updatePaths(event.value);
   getExplorerContext().setNodes(event.value);
 
