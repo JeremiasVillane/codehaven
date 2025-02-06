@@ -23,6 +23,7 @@ export const DEFAULT_SETTINGS: EditorSettings = {
   fontSize: 14,
   lineHeight: 1.5,
   wordWrap: "on",
+  minimap: { enabled: false },
   autoRunStartupScript: "on",
   persistStorage: "on",
 };

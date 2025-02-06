@@ -1,12 +1,14 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
-import { useApp } from "@/contexts";
-import { sanitizeInput } from "@/helpers";
+import { useApp, useFiles } from "@/contexts";
+import { initializeProjectTerminals, sanitizeInput } from "@/helpers";
 import { cn } from "@/lib/utils";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
+import { Button } from "primereact/button";
 
 export function Header() {
+  const { files } = useFiles();
   const { projectName, setProjectName } = useApp();
   const [isEditingName, setIsEditingName] = useState(false);
   const [newFileName, setNewFileName] = useState<string>(projectName);
@@ -35,7 +37,7 @@ export function Header() {
   };
 
   return (
-    <header className="flex items-center justify-between py-2 px-6 bg-header-background select-none w-full h-[var(--header-height)]">
+    <header className="flex items-center justify-between py-2 px-3 md:px-6 bg-header-background select-none w-full h-[var(--header-height)]">
       <h1 className="flex items-center gap-2 group relative">
         <img
           src="/codehaven-logo.png"
@@ -75,9 +77,25 @@ export function Header() {
         />
       )}
 
-      <section className="flex items-center gap-2">
+      <section className="flex items-center gap-1 md:gap-2">
+        <Button
+          title="Run the current project"
+          onClick={initializeProjectTerminals}
+          className={cn(
+            "primary-button",
+            "text-indigo-600 md:dark:text-white md:text-gray-600 h-6 px-0.5 md:px-3 text-xs md:text-sm flex items-center gap-2 bg-transparent dark:bg-transparent hover:bg-transparent dark:hover:bg-transparent shadow-none md:shadow-sm md:bg-indigo-700 md:dark:bg-indigo-900 md:dark:hover:bg-indigo-800 mr-1 md:mr-10",
+            isEditingName ? "hidden" : ""
+          )}
+          disabled={files.length < 1}
+        >
+          <i className="pi pi-play-circle" />{" "}
+          <span className="hidden md:flex">Run</span>
+        </Button>
+
         <ThemeSwitcher />
-        <span className="px-2 text-gray-400">|</span>
+
+        <span className="px-0.5 md:px-2 text-gray-400">|</span>
+
         <a
           title="GitHub"
           href="https://github.com/JeremiasVillane/"
