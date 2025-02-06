@@ -84,6 +84,8 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
             }
 
             dockLayout.dockMove(newPreviewTab, "preview", "middle");
+            setIsInstalled(false);
+            setIsPopulated(false);
           }, 1000);
         });
       } catch (error) {

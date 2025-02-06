@@ -1,8 +1,19 @@
-import { useRef } from "react";
+import { useApp } from "@/contexts";
+import { useEffect, useRef } from "react";
 import { PreviewHeader } from "./preview-header";
 
 export function Preview({ previewURL }: { previewURL: string }) {
+  const { setShowProgress } = useApp();
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const handleShowSeeding = () => setShowProgress(true);
+    window.addEventListener("seeding", handleShowSeeding);
+
+    return () => {
+      window.removeEventListener("seeding", handleShowSeeding);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col size-full select-none overflow-y-auto">

@@ -16,6 +16,7 @@ export async function boilerplateLoader(templateId: string) {
     const { template, commands } = boilerplates[templateId];
 
     if (!!commands && commands.length > 1) {
+      console.log("dispatching...")
       window.dispatchEvent(new CustomEvent("seeding"));
     }
 

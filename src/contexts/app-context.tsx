@@ -12,6 +12,8 @@ interface IAppContext {
   setShowTemplateModal: (val: boolean) => void;
   showSettingsModal: boolean;
   setShowSettingsModal: (val: boolean) => void;
+  showProgress: boolean;
+  setShowProgress: (val: boolean) => void;
 }
 
 const AppContext = createContext<IAppContext | null>(null);
@@ -36,6 +38,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   const [activePanel, setActivePanel] = useState("preview");
   const [showTemplateModal, setShowTemplateModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showProgress, setShowProgress] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("codehaven:project-name", projectName);
@@ -52,6 +55,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
     setShowTemplateModal,
     showSettingsModal,
     setShowSettingsModal,
+    showProgress,
+    setShowProgress,
   };
   externalContext = value;
 

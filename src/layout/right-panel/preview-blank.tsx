@@ -1,9 +1,9 @@
-import { useWebContainer } from "@/contexts";
-import { useEffect, useState } from "react";
+import { useApp, useWebContainer } from "@/contexts";
+import { useEffect } from "react";
 
 export function PreviewBlank() {
   const { isBooted, isPopulated, isInstalled, error } = useWebContainer();
-  const [showProgress, setShowProgress] = useState(false);
+  const { showProgress, setShowProgress } = useApp();
 
   useEffect(() => {
     const handleShowSeeding = () => setShowProgress(true);
@@ -20,7 +20,7 @@ export function PreviewBlank() {
     gridTemplateRows: "1fr 1fr 1fr",
     gap: "0 0",
     gridAutoFlow: "row",
-    alignItems: "center"
+    alignItems: "center",
   };
 
   return (
