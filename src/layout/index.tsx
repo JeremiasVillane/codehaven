@@ -89,6 +89,7 @@ export const groups: Record<string, TabGroup> = {
   explorer: {
     floatable: false,
     maximizable: false,
+    tabLocked: true,
     panelExtra: () => (
       <div>
         <i

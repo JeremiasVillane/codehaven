@@ -16,6 +16,7 @@ export function getTerminalTab({
     content: <Terminal {...{ commands }} />,
     group: "debug",
     cached: true,
+    closable: true,
     minWidth: 222,
     minHeight: 33,
   };
