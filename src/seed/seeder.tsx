@@ -16,7 +16,7 @@ export async function initializeProjectIfEmpty(): Promise<void> {
         "[PROJECT INITIALIZER] IndexedDB is empty. Seeding initial files..."
       );
 
-      if (autoRunStartupScript) {
+      if (autoRunStartupScript === "on") {
         window.dispatchEvent(new CustomEvent("seeding"));
       }
 
@@ -55,7 +55,7 @@ export async function initializeProjectIfEmpty(): Promise<void> {
       debugLog("[PROJECT INITIALIZER] Project initialized successfully.");
       getWebContainerContext().setIsPopulated(true);
 
-      if (autoRunStartupScript) {
+      if (autoRunStartupScript === "on") {
         const dockLayout = getAppContext().dockLayout;
         const terminals: TabData[] = ["server", "client"].map((folder, idx) =>
           getTerminalTab({

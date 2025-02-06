@@ -24,8 +24,9 @@ export const DEFAULT_SETTINGS: EditorSettings = {
   lineHeight: 1.5,
   wordWrap: "on",
   minimap: { enabled: false },
-  autoRunStartupScript: "on",
   persistStorage: "on",
+  autoLoadExample: "on",
+  autoRunStartupScript: "on",
 };
 
 const iconStyle = "size-10 text-indigo-500";

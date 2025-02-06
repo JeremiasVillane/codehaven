@@ -33,11 +33,10 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
 
   const handleSave = () => {
     persistSettings(localSettings);
-    const { persistStorage, autoRunStartupScript, ...rest } = localSettings;
-    setPersistStorage(persistStorage === "on");
+    setPersistStorage(localSettings.persistStorage === "on");
 
     window.dispatchEvent(
-      new CustomEvent("editorSettingsChange", { detail: rest })
+      new CustomEvent("editorSettingsChange", { detail: localSettings })
     );
     setShowSettingsModal(false);
   };
@@ -129,13 +128,16 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
             <h3 className="text-sm font-medium text-foreground">Application</h3>
             {Object.entries({
               persistStorage: "Persist files using IndexedDB",
-              autoRunStartupScript: "Auto run startup script on boot",
+              autoLoadExample: "Auto load example project",
+              autoRunStartupScript: "Auto run startup script on load",
             }).map(([setting, desc], idx) => (
               <div
                 key={idx}
                 className="flex items-center justify-between text-muted-foreground"
               >
-                <label htmlFor={setting} className="w-2/3">{desc}</label>
+                <label htmlFor={setting} className="w-2/3">
+                  {desc}
+                </label>
                 <SelectButton
                   id={setting}
                   value={localSettings[setting]}

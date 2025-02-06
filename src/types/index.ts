@@ -42,5 +42,6 @@ export type EditorSettings = {
   wordWrap: "on" | "off";
   minimap: { enabled: boolean };
   persistStorage: "on" | "off";
+  autoLoadExample: "on" | "off";
   autoRunStartupScript: "on" | "off";
 };

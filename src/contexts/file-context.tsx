@@ -1,4 +1,5 @@
 import { compareObjectKeys, debugLog } from "@/helpers";
+import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 import { initializeProjectIfEmpty } from "@/seed/seeder";
 import { dbService, syncService, webContainerService } from "@/services";
 import { FileData } from "@/types";
@@ -58,7 +59,8 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     (async () => {
       try {
-        await initializeProjectIfEmpty();
+        const { autoLoadExample } = getEditorSettings();
+        if (autoLoadExample === "on") await initializeProjectIfEmpty();
         await loadFiles();
       } catch (error) {
         debugLog("[FILE_PROVIDER] Error initializing project:", error);
