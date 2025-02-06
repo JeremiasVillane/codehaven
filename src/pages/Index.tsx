@@ -2,11 +2,12 @@ import { SettingsModal } from "@/common/settings-modal";
 import { TemplateModal } from "@/common/template-modal";
 import { DEFAULT_SETTINGS, PANEL_IDS } from "@/constants";
 import { useApp } from "@/contexts";
-import { setVisibilityControl } from "@/helpers";
+import { initializeProjectTerminals, setVisibilityControl } from "@/helpers";
 import { useIsMobile } from "@/hooks";
 import { defaultLayout, groups } from "@/layout";
 import { MobileNav } from "@/layout/footer";
 import { Header } from "@/layout/header";
+import { EditorSettings } from "@/types";
 import { DockLayout } from "rc-dock";
 import "rc-dock/dist/rc-dock.css";
 import { useEffect, useRef } from "react";
@@ -22,7 +23,7 @@ export default function IndexPage() {
   const isMobile = useIsMobile();
   const layoutRef = useRef<DockLayout | null>(null);
 
-  const editorSettings = () => {
+  const editorSettings = (): EditorSettings => {
     const stored = localStorage.getItem("codehaven:editor-settings");
     return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
   };
@@ -42,6 +43,13 @@ export default function IndexPage() {
       });
     }
   }, [isMobile, activePanel, dockLayout]);
+
+  useEffect(() => {
+    const currentSettings = editorSettings();
+    if (currentSettings.autoRunStartupScript === "on") {
+      initializeProjectTerminals();
+    }
+  }, []);
 
   return (
     <main className="h-screen w-screen bg-header-background">

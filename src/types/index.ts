@@ -41,4 +41,5 @@ export type EditorSettings = {
   lineHeight: number;
   wordWrap: "on" | "off";
   persistStorage: "on" | "off";
+  autoRunStartupScript: "on" | "off";
 };

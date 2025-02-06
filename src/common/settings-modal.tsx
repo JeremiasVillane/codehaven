@@ -8,7 +8,8 @@ import { SelectButton } from "primereact/selectbutton";
 import { useEffect, useState } from "react";
 
 export function SettingsModal({ settings }: { settings: EditorSettings }) {
-  const { showSettingsModal, setShowSettingsModal } = useApp();
+  const { showSettingsModal, setShowSettingsModal, setPersistStorage } =
+    useApp();
   const [localSettings, setLocalSettings] = useState<EditorSettings>(settings);
 
   useEffect(() => {
@@ -32,7 +33,8 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
 
   const handleSave = () => {
     persistSettings(localSettings);
-    const { persistStorage, ...rest } = localSettings;
+    const { persistStorage, autoRunStartupScript, ...rest } = localSettings;
+    setPersistStorage(persistStorage === "on");
 
     window.dispatchEvent(
       new CustomEvent("editorSettingsChange", { detail: rest })
@@ -45,8 +47,8 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
       header={
         <header>
           <div className="flex items-center gap-2.5 text-foreground">
-            <i className="pi pi-sliders-h text-lg" />
-            Editor Settings
+            <i className="pi pi-cog text-lg" />
+            Settings
           </div>
         </header>
       }
@@ -110,18 +112,23 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
 
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-foreground">Application</h3>
-            <div className="flex items-center justify-between text-muted-foreground">
-              <label htmlFor="persistStorage">
-                Persist files using IndexedDB
-              </label>
-              <SelectButton
-                id="persistStorage"
-                value={localSettings.persistStorage}
-                onChange={() => handleToggleChange("persistStorage")}
-                options={["on", "off"]}
-                className="custom-select"
-              />
-            </div>
+            {Object.entries({
+              persistStorage: "Persist files using IndexedDB",
+              autoRunStartupScript: "Auto run startup script on boot",
+            }).map(([setting, title]) => (
+              <div className="flex items-center justify-between text-muted-foreground">
+                <label htmlFor={setting}>{title}</label>
+                <SelectButton
+                  id={setting}
+                  value={localSettings[setting]}
+                  onChange={() =>
+                    handleToggleChange(setting as keyof EditorSettings)
+                  }
+                  options={["on", "off"]}
+                  className="custom-select"
+                />
+              </div>
+            ))}
           </div>
         </div>
 

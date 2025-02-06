@@ -32,31 +32,37 @@ class DBService {
 
   async getFilesByParent(parentId: string | null) {
     const db = await this.init();
+    if (!db) return [];
     return db.getAllFromIndex("files", "by-parent", parentId);
   }
 
   async getFile(id: string) {
     const db = await this.init();
+    if (!db) return;
     return db.get("files", id);
   }
 
   async getAllFiles() {
     const db = await this.init();
+    if (!db) return [];
     return db.getAll("files");
   }
 
   async saveFile(file: FileData) {
     const db = await this.init();
+    if (!db) return;
     await db.put("files", file);
   }
 
   async deleteFile(id: string) {
     const db = await this.init();
+    if (!db) return;
     await db.delete("files", id);
   }
 
   async clearAllFiles() {
     const db = await this.init();
+    if (!db) return;
     const tx = db.transaction("files", "readwrite");
     await tx.objectStore("files").clear();
     await tx.done;
