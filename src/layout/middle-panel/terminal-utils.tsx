@@ -59,14 +59,25 @@ export function addTerminal(commands?: string[]) {
   const dockLayout = getAppContext().dockLayout;
   if (!dockLayout) return;
 
+  let lastTerminalNum: number = 0;
+
   const debugPanel = dockLayout.find("debug");
-  const numOfTerminals = (debugPanel as PanelData).tabs.filter(
+  const listOfTerminals = (debugPanel as PanelData).tabs.filter(
     (t) => t.id !== "console"
-  ).length;
+  );
+
+  if (listOfTerminals.length > 0) {
+    lastTerminalNum = Number(
+      listOfTerminals
+        .sort((a, b) => Number(a.id.at(-1)) - Number(b.id.at(-1)))
+        .pop()
+        .id.at(-1)
+    );
+  }
 
   const newTerminal: TabData = {
-    id: `terminal${numOfTerminals + 1}`,
-    title: `Terminal ${numOfTerminals + 1}`,
+    id: `terminal${Number(lastTerminalNum) + 1}`,
+    title: `Terminal ${Number(lastTerminalNum) + 1}`,
     content: <Terminal {...{ commands }} />,
     group: "debug",
     cached: true,

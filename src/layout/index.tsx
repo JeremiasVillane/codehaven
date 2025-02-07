@@ -50,7 +50,6 @@ export const defaultLayout: LayoutData = {
           },
           {
             id: "debug",
-            activeId: "terminal",
             panelLock: { panelStyle: "debug" },
             size: 77,
             tabs: [
@@ -129,7 +128,7 @@ export const groups: Record<string, TabGroup> = {
     ),
   },
   preview: {
-    floatable: true,
+    floatable: false,
     maximizable: true,
     tabLocked: false,
   },
