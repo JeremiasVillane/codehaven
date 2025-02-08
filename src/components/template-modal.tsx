@@ -16,7 +16,7 @@ export function TemplateModal() {
       }}
       resizable={false}
     >
-      <article className="sm:max-w-[900px] bg-sidebar-background">
+      <article className="sm:max-w-[900px] bg-sidebar-background select-none">
         <div className="space-y-6">
           <section>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">

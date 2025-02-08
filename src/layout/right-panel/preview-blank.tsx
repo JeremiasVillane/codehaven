@@ -24,7 +24,7 @@ export function PreviewBlank() {
   };
 
   return (
-    <div className="bg-preview-background size-full flex flex-col items-center gap-6">
+    <div className="bg-preview-background size-full flex flex-col items-center gap-6 select-none">
       <img
         src="/codehaven-full.png"
         width="50%"
