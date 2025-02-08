@@ -95,7 +95,7 @@ export const groups: Record<string, TabGroup> = {
           role="button"
           title="New file..."
           onClick={() => handleCreateClick(false)}
-          className="pi pi-file-plus hover:text-indigo-400"
+          className="pi pi-file-plus hover:text-indigo-400 text-[1em]"
         ></i>
 
         <i
