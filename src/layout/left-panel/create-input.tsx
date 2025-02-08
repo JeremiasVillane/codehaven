@@ -1,5 +1,5 @@
 import { useExplorer } from "@/contexts";
-import { sanitizeInput } from "@/helpers";
+import { sanitizeInput } from "@/utils";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useRef } from "react";

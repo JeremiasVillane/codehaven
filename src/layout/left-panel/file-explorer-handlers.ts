@@ -4,7 +4,7 @@ import {
   buildFileDataFromTree,
   debugLog,
   findNodeByKey,
-  getTab,
+  getEditorTab,
   updatePaths,
 } from "@/helpers";
 import { dbService } from "@/services";
@@ -38,7 +38,7 @@ export const handleFileClick = (
       return;
     }
 
-    const newTab = getTab(file);
+    const newTab = getEditorTab(file);
 
     if ((editorPanel as PanelData).tabs.find((t) => t.id === "editor-blank")) {
       getAppContext().dockLayout.updateTab("editor-blank", newTab, true);

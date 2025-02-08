@@ -1,4 +1,4 @@
-import { sanitizeInput } from "@/helpers";
+import { sanitizeInput } from "@/utils";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useState } from "react";

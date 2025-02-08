@@ -1,10 +1,10 @@
 import { useApp } from "@/contexts";
-import { deepEqual } from "@/helpers";
 import {
   getEditorSettings,
   persistSettings,
 } from "@/layout/middle-panel/code-editor-helpers";
 import { EditorSettings } from "@/types";
+import { deepEqual } from "@/utils";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";

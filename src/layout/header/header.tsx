@@ -1,8 +1,8 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
 import { getAppContext, useApp, useFiles } from "@/contexts";
-import { initializeProjectTerminals, sanitizeInput } from "@/helpers";
+import { initializeProjectTerminals } from "@/helpers";
 import { useIsMobile } from "@/hooks";
-import { cn } from "@/lib/utils";
+import { cn, sanitizeInput } from "@/utils";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";

@@ -1,8 +1,9 @@
-import { compareObjectKeys, debugLog } from "@/helpers";
+import { debugLog } from "@/helpers";
 import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 import { initializeProjectIfEmpty } from "@/seed/seeder";
 import { dbService, syncService, webContainerService } from "@/services";
 import { FileData } from "@/types";
+import { compareObjectKeys } from "@/utils";
 import {
   createContext,
   useCallback,

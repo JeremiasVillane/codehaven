@@ -2,7 +2,7 @@ import { CodeEditor } from "@/layout/middle-panel";
 import { FileData } from "@/types";
 import { TabData } from "rc-dock";
 
-export function getTab(file: FileData): TabData {
+export function getEditorTab(file: FileData): TabData {
   return {
     id: file.id,
     content: <CodeEditor selectedFile={file} />,

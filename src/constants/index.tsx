@@ -9,8 +9,8 @@ import {
 } from "@/assets";
 import { PhFileLight } from "@/assets/BlankIcon";
 import { UitVuejsAlt } from "@/assets/VueIcon";
-import { cn } from "@/lib/utils";
 import { EditorSettings } from "@/types";
+import { cn } from "@/utils";
 
 export const PANEL_IDS = ["explorer", "editor", "debug", "preview"] as const;
 

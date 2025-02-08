@@ -1,7 +1,7 @@
 import { getFileContext, getWebContainerContext } from "@/contexts";
 import { addTerminal } from "@/layout/middle-panel/terminal-utils";
 import { debugLog } from "./debug-log";
-import { removeFilteredTabs } from "./remove-filtered-tabs";
+import { removeFilteredTabs } from "../dock-helpers/remove-filtered-tabs";
 
 export async function initializeProjectTerminals() {
   try {
