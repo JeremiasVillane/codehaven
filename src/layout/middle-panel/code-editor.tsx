@@ -10,6 +10,7 @@ import {
   handleBeforeMount,
   handleEditorDidMount,
   persistSettings,
+  restoreBlankTab,
 } from "./code-editor-helpers";
 import editorOptions from "./code-editor-options";
 
@@ -84,6 +85,8 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
       );
     };
   }, [theme]);
+
+  useEffect(() => () => restoreBlankTab(), []);
 
   return (
     <Editor

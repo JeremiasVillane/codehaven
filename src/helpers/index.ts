@@ -1,3 +1,4 @@
+export * from "./add-tab-to-panel";
 export * from "./boilerplate-loader";
 export * from "./build-filedata-from-tree";
 export * from "./build-prime-tree";
@@ -8,6 +9,7 @@ export * from "./find-node-by-key";
 export * from "./get-tab";
 export * from "./get-terminal-tab";
 export * from "./initialize-project-terminals";
+export * from "./remove-filtered-tabs";
 export * from "./sanitize-input";
 export * from "./set-visibility-control";
 export * from "./update-paths";

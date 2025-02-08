@@ -1,8 +1,11 @@
+import { addTabToPanel, removeFilteredTabs } from "@/helpers";
 import { useTheme } from "@/hooks";
+import { webContainerService } from "@/services";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerm } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
 import { useEffect, useRef } from "react";
+import { PreviewBlank } from "../right-panel/preview-blank";
 import terminalThemes from "./terminal-themes";
 import { startShell } from "./terminal-utils";
 
@@ -10,9 +13,10 @@ export function Terminal({ commands }: { commands?: string[] }) {
   const { theme } = useTheme();
 
   const terminalRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef(null);
-  const xterm = useRef<XTerm | null>(null);
   const fitAddon = useRef<FitAddon | null>(null);
+  const xterm = useRef<XTerm | null>(null);
+  const processRef = useRef<any>(null);
+  const containerRef = useRef(null);
 
   //*** INITIALIZATION ***//
   useEffect(() => {
@@ -26,11 +30,28 @@ export function Terminal({ commands }: { commands?: string[] }) {
         fitAddon.current.fit();
       }
 
-      await startShell(xterm, commands);
+      processRef.current = await startShell(xterm, commands);
     })();
 
     return () => {
+      if (processRef.current) {
+        processRef.current.kill();
+      }
+      webContainerService.killJshSession();
       xterm.current?.dispose();
+
+      removeFilteredTabs("preview", "preview-blank");
+      addTabToPanel(
+        {
+          id: "preview-blank",
+          title: "Preview",
+          content: <PreviewBlank />,
+          minWidth: 222,
+          minHeight: 66,
+          group: "preview",
+        },
+        "preview"
+      );
     };
   }, []);
 
@@ -71,14 +92,7 @@ export function Terminal({ commands }: { commands?: string[] }) {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: "100%",
-        height: "100%",
-        overflow: "hidden",
-      }}
-    >
+    <div ref={containerRef} className="size-full overflow-hidden">
       <div ref={terminalRef} className="size-full bg-terminal-background" />
     </div>
   );

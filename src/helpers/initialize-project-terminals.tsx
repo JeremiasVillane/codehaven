@@ -1,9 +1,13 @@
 import { getFileContext, getWebContainerContext } from "@/contexts";
 import { addTerminal } from "@/layout/middle-panel/terminal-utils";
 import { debugLog } from "./debug-log";
+import { removeFilteredTabs } from "./remove-filtered-tabs";
 
 export async function initializeProjectTerminals() {
   try {
+    removeFilteredTabs("debug", "console");
+    removeFilteredTabs("preview", "preview-blank");
+
     const setIsPopulated = getWebContainerContext().setIsPopulated;
     const files = await getFileContext().getAllFiles();
 

@@ -1,5 +1,5 @@
 import { getAppContext, getFileContext } from "@/contexts";
-import { debugLog } from "@/helpers";
+import { addTabToPanel, debugLog } from "@/helpers";
 import { syncService, webContainerService } from "@/services";
 import { Terminal as XTerm } from "@xterm/xterm";
 import { PanelData, TabData } from "rc-dock";
@@ -19,7 +19,7 @@ export async function startShell(
   commands?: string[]
 ) {
   try {
-    const process = await webContainerService.runCommand("jsh");
+    const process = await webContainerService.startJshSession();
     const writable = process?.input.getWriter();
 
     process?.output.pipeTo(
@@ -86,5 +86,5 @@ export function addTerminal(commands?: string[]) {
     minHeight: 33,
   };
 
-  dockLayout.dockMove(newTerminal, "debug", "middle");
+  addTabToPanel(newTerminal, "debug");
 }

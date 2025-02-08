@@ -1,4 +1,4 @@
-import { debugLog } from "@/helpers";
+import { addTabToPanel, debugLog } from "@/helpers";
 import { Preview } from "@/layout/right-panel";
 import { webContainerService } from "@/services";
 import { PanelData, TabData } from "rc-dock";
@@ -84,7 +84,7 @@ export const WebContainerProvider = ({ children }: { children: ReactNode }) => {
               dockLayout.updateTab("preview-blank", newPreviewTab, true);
             }
 
-            dockLayout.dockMove(newPreviewTab, "preview", "middle");
+            addTabToPanel(newPreviewTab, "preview");
             setIsInstalled(false);
             setIsPopulated(false);
           }, 1000);

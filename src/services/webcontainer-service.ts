@@ -1,5 +1,5 @@
 import { debugLog } from "@/helpers";
-import { WebContainer } from "@webcontainer/api";
+import { WebContainer, WebContainerProcess } from "@webcontainer/api";
 
 import { ContainerFile } from "@/types";
 import path from "path-browserify";
@@ -8,6 +8,7 @@ class WebContainerService {
   private static instance: WebContainerService;
   private webcontainer: WebContainer | null = null;
   private boot: Promise<WebContainer> | null = null;
+  private jshProcess: WebContainerProcess | null = null;
 
   private constructor() {}
 
@@ -36,6 +37,28 @@ class WebContainerService {
     })();
 
     return this.boot;
+  }
+
+  async startJshSession(): Promise<WebContainerProcess> {
+    const wc = await this.init();
+    debugLog("[WEBCONTAINER] Starting jsh session...");
+    this.jshProcess = await wc.spawn("jsh");
+    return this.jshProcess;
+  }
+
+  async killJshSession(): Promise<void> {
+    if (this.jshProcess) {
+      try {
+        this.jshProcess.kill();
+        debugLog("[WEBCONTAINER] jsh session terminated.");
+        this.jshProcess = null;
+      } catch (error) {
+        debugLog("[WEBCONTAINER] Error terminating jsh session:", error);
+        throw error;
+      }
+    } else {
+      debugLog("[WEBCONTAINER] There is no jsh session to terminate.");
+    }
   }
 
   async createFolder(path: string): Promise<void> {

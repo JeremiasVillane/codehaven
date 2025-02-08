@@ -1,10 +1,10 @@
-import { getAppContext, getWebContainerContext } from "@/contexts";
-import { debugLog, getTerminalTab } from "@/helpers";
+import { getWebContainerContext } from "@/contexts";
+import { addTabToPanel, debugLog, getTerminalTab } from "@/helpers";
+import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 import { dbService, webContainerService } from "@/services";
 import { TabData } from "rc-dock";
 import flattenInitialFiles from "./builder";
 import { initialFiles } from "./seed";
-import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 
 export async function initializeProjectIfEmpty(): Promise<void> {
   try {
@@ -56,7 +56,6 @@ export async function initializeProjectIfEmpty(): Promise<void> {
       getWebContainerContext().setIsPopulated(true);
 
       if (autoRunStartupScript === "on") {
-        const dockLayout = getAppContext().dockLayout;
         const terminals: TabData[] = ["server", "client"].map((folder, idx) =>
           getTerminalTab({
             id: `terminal${idx + 1}`,
@@ -65,14 +64,12 @@ export async function initializeProjectIfEmpty(): Promise<void> {
           })
         );
 
-        terminals.map((t) => dockLayout.dockMove(t, "debug", "middle"));
+        terminals.map((t) => addTabToPanel(t, "debug"));
       }
     } else {
-      const dockLayout = getAppContext().dockLayout;
-      dockLayout.dockMove(
+      addTabToPanel(
         getTerminalTab({ id: "terminal1", title: "Terminal 1" }),
-        "debug",
-        "middle"
+        "debug"
       );
 
       debugLog(

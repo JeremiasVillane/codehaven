@@ -1,5 +1,6 @@
 import { getAppContext, getExplorerContext, getFileContext } from "@/contexts";
 import {
+  addTabToPanel,
   buildFileDataFromTree,
   debugLog,
   findNodeByKey,
@@ -43,7 +44,7 @@ export const handleFileClick = (
       getAppContext().dockLayout.updateTab("editor-blank", newTab, true);
     }
 
-    getAppContext().dockLayout.dockMove(newTab, "editor", "middle");
+    addTabToPanel(newTab, "editor");
 
     if (isMobile) getAppContext().setActivePanel("editor");
   }

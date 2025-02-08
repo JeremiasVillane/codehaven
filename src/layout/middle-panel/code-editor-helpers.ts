@@ -1,6 +1,10 @@
 import { DEFAULT_SETTINGS } from "@/constants";
+import { getAppContext } from "@/contexts";
+import { addTabToPanel } from "@/helpers";
 import { EditorSettings } from "@/types";
 import * as monaco from "monaco-editor";
+import { PanelData } from "rc-dock";
+import { CodeEditorBlank } from "./code-editor-blank";
 
 export const getEditorSettings = (): EditorSettings => {
   const stored = localStorage.getItem("codehaven:editor-settings");
@@ -12,6 +16,26 @@ export const persistSettings = (newSettings: EditorSettings) => {
     "codehaven:editor-settings",
     JSON.stringify(newSettings)
   );
+};
+
+export const restoreBlankTab = () => {
+  const dockLayout = getAppContext().dockLayout;
+  if (!dockLayout) return;
+
+  const editorPanel = dockLayout.find("editor") as PanelData;
+  if (editorPanel.tabs.length < 1) {
+    addTabToPanel(
+      {
+        id: "editor-blank",
+        title: "Editor",
+        content: CodeEditorBlank,
+        group: "editor",
+        minWidth: 222,
+        minHeight: 33,
+      },
+      "editor"
+    );
+  }
 };
 
 export const getLanguage = (filename: string) => {

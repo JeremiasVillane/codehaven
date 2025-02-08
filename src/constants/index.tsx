@@ -12,7 +12,7 @@ import { UitVuejsAlt } from "@/assets/VueIcon";
 import { cn } from "@/lib/utils";
 import { EditorSettings } from "@/types";
 
-export const PANEL_IDS = ["explorer", "editor", "debug", "preview"];
+export const PANEL_IDS = ["explorer", "editor", "debug", "preview"] as const;
 
 export const DB_NAME = "codehaven";
 export const DB_VERSION = 1;

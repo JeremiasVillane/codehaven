@@ -12,6 +12,7 @@ export function Preview({ previewURL }: { previewURL: string }) {
 
     return () => {
       window.removeEventListener("seeding", handleShowSeeding);
+      setShowProgress(false);
     };
   }, []);
 
