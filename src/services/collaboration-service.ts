@@ -11,7 +11,7 @@ export function initCollaboration() {
   if (!ydoc) {
     ydoc = new Y.Doc();
     provider = new WebrtcProvider(room, ydoc, {
-      signaling: [`${import.meta.env.VITE_SIGNALING_SERVER}?room=${room}`],
+      signaling: [`${import.meta.env.VITE_SIGNALING_SERVER}`],
     });
   }
   return ydoc;
