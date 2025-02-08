@@ -1,12 +1,12 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
-import { useApp, useFiles } from "@/contexts";
+import { getAppContext, useApp, useFiles } from "@/contexts";
 import { initializeProjectTerminals, sanitizeInput } from "@/helpers";
+import { useIsMobile } from "@/hooks";
 import { cn } from "@/lib/utils";
+import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
-import { Button } from "primereact/button";
-import { useIsMobile } from "@/hooks";
 
 export function Header() {
   const { files } = useFiles();
@@ -37,6 +37,11 @@ export function Header() {
       setProjectName(trimmedName);
       setIsEditingName(false);
     }
+  };
+
+  const handleRun = () => {
+    initializeProjectTerminals();
+    getAppContext().setActivePanel("preview");
   };
 
   return (
@@ -91,7 +96,7 @@ export function Header() {
       <section className="flex items-center gap-1 md:gap-2">
         <Button
           title="Run the current project"
-          onClick={initializeProjectTerminals}
+          onClick={handleRun}
           className={cn(
             "primary-button",
             "text-indigo-600 md:text-white h-6 px-0.5 md:px-3 text-xs md:text-sm flex items-center gap-2 bg-transparent dark:bg-transparent hover:bg-transparent dark:hover:bg-transparent shadow-none md:shadow-sm md:bg-indigo-700 md:dark:bg-indigo-900 md:hover:bg-indigo-600 md:dark:hover:bg-indigo-800 mr-1 md:mr-10",

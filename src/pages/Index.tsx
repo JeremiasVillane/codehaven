@@ -1,5 +1,4 @@
-import { SettingsModal } from "@/common/settings-modal";
-import { TemplateModal } from "@/common/template-modal";
+import { SettingsModal, TemplateModal } from "@/components";
 import { PANEL_IDS } from "@/constants";
 import { useApp } from "@/contexts";
 import { initializeProjectTerminals, setVisibilityControl } from "@/helpers";

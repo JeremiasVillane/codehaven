@@ -69,7 +69,7 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-foreground">Editor</h3>
             <div className="grid gap-4 text-muted-foreground">
-              <div className="grid grid-cols-3 items-center gap-4 ">
+              <div className="grid grid-cols-3 items-center gap-4">
                 <label htmlFor="fontSize">Font Size</label>
                 <InputText
                   id="fontSize"

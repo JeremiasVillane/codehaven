@@ -1,15 +1,10 @@
 import { TEMPLATES } from "@/constants";
 import { useApp } from "@/contexts";
-import { boilerplateLoader } from "@/helpers";
 import { Dialog } from "primereact/dialog";
+import { handleSelectTemplate } from "./template-modal-handlers";
 
 export function TemplateModal() {
   const { showTemplateModal, setShowTemplateModal } = useApp();
-
-  const handleSelectTemplate = async (templateId: string) => {
-    setShowTemplateModal(false);
-    await boilerplateLoader(templateId);
-  };
 
   return (
     <Dialog
@@ -40,12 +35,14 @@ export function TemplateModal() {
                 onClick={() => handleSelectTemplate(template.id)}
               >
                 {template.icon}
-                <h3 className="text-lg font-semibold mb-2 text-foreground">{template.title}</h3>
+                <h3 className="text-lg font-semibold mb-2 text-foreground">
+                  {template.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
                   {template.description}
                 </p>
                 <div className="flex gap-2 mt-4 flex-wrap">
-                  {template.tech.map((tech) => (
+                  {template.tech.map((tech: string) => (
                     <span
                       key={tech}
                       className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary"
