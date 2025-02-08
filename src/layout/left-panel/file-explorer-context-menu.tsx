@@ -1,9 +1,10 @@
 import { getExplorerContext, getFileContext } from "@/contexts";
 import { debugLog } from "@/helpers";
 import { dbService } from "@/services";
+import { MenuItem } from "primereact/menuitem";
 import { handleCreateClick } from "./file-explorer-handlers";
 
-export function getContextMenuItems() {
+export function getContextMenuItems(): MenuItem[] {
   const explorerCtx = getExplorerContext();
   const fileCtx = getFileContext();
   const selectedKey = explorerCtx.selectedKey;
