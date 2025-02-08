@@ -11,7 +11,7 @@ export function initCollaboration() {
   if (!ydoc) {
     ydoc = new Y.Doc();
     provider = new WebrtcProvider(room, ydoc, {
-      signaling: ["wss://signaling.yjs.dev"],
+      signaling: ["wss://yjs-signaling-server.herokuapp.com"],
     });
   }
   return ydoc;
