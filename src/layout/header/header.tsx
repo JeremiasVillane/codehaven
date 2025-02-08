@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { useEffect, useRef, useState } from "react";
 import ThemeSwitcher from "./theme-switcher";
+import { CollaborationLinkButton } from "@/components";
 
 export function Header() {
   const { files } = useFiles();
@@ -94,6 +95,8 @@ export function Header() {
       )}
 
       <section className="flex items-center gap-1 md:gap-2">
+        <CollaborationLinkButton />
+
         <Button
           title="Run the current project"
           onClick={handleRun}

@@ -2,6 +2,7 @@ import { debugLog } from "@/helpers";
 import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 import { initializeProjectIfEmpty } from "@/seed/seeder";
 import { dbService, syncService, webContainerService } from "@/services";
+import { getFilesMap, initCollaboration } from "@/services";
 import { FileData } from "@/types";
 import { compareObjectKeys } from "@/utils";
 import {
@@ -12,6 +13,7 @@ import {
   useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
+import * as Y from "yjs";
 
 interface IFileContext {
   files: FileData[];
@@ -68,6 +70,32 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     })();
   }, [loadFiles]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const room = searchParams.get("room");
+    if (!room) return;
+
+    const doc = initCollaboration();
+
+    if (!doc) return;
+    const filesMap = getFilesMap();
+    if (!filesMap) return;
+
+    files.forEach((file) => {
+      if (!filesMap.has(file.id)) {
+        const ytext = new Y.Text();
+        ytext.insert(0, file.content);
+        filesMap.set(file.id, ytext);
+
+        ytext.observe(() => {
+          const newContent = ytext.toString();
+          console.log("newContent:", newContent);
+          updateFile(file.id, { content: newContent });
+        });
+      }
+    });
+  }, [files]);
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
