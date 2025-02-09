@@ -1,13 +1,10 @@
 import { DEFAULT_SETTINGS } from "@/constants";
 import { useFiles } from "@/contexts";
 import { useTheme } from "@/hooks";
-import { getFilesMap, getProvider, getYDoc } from "@/services";
 import { EditorSettings, FileData } from "@/types";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
 import { useEffect, useRef, useState } from "react";
-import { MonacoBinding } from "y-monaco";
-import * as Y from "yjs";
 import {
   getLanguage,
   handleBeforeMount,
@@ -19,21 +16,16 @@ import editorOptions from "./code-editor-options";
 
 export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   const { theme } = useTheme();
-  const { updateFile } = useFiles();
+  const { updateFile, sendFileUpdate, currentFile } = useFiles();
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const [editorValue, setEditorValue] = useState(selectedFile.content);
   const [currentTheme, setCurrentTheme] = useState<"vs-dark" | "vs-light">(
     `vs-${theme}`
   );
-  const [editorValue, setEditorValue] = useState(selectedFile.content);
   const [currentSettings, setCurrentSettings] = useState<EditorSettings>(() => {
     const stored = localStorage.getItem("codehaven:editor-settings");
     return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
   });
-
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-
-  const searchParams = new URLSearchParams(window.location.search);
-  const room = searchParams.get("room");
-  const isCollaborative = !!room;
 
   useEffect(() => {
     if (editorRef.current) {
@@ -55,6 +47,7 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
       "editorSettingsChange",
       updateSettingsEvent as EventListener
     );
+
     return () => {
       window.removeEventListener(
         "editorSettingsChange",
@@ -64,17 +57,17 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   }, []);
 
   useEffect(() => {
-    setEditorValue(selectedFile.content);
-  }, [selectedFile]);
+    setEditorValue(currentFile.content);
+  }, [currentFile.content]);
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      updateFile(selectedFile.id, { content: editorValue });
-    }, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
+    const room = new URLSearchParams(window.location.search).get("room");
+    if (!room) {
+      const timeoutId = setTimeout(() => {
+        updateFile(selectedFile.id, { content: editorValue });
+      }, 500);
+      return () => clearTimeout(timeoutId);
+    }
   }, [editorValue, selectedFile.id, updateFile]);
 
   useEffect(() => {
@@ -95,38 +88,15 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
 
   useEffect(() => () => restoreBlankTab(), []);
 
-  const handleCollaborativeMount = (
-    editor: monaco.editor.IStandaloneCodeEditor,
-    monacoInstance: typeof monaco
-  ) => {
-    handleEditorDidMount(editor, editorRef);
+  const handleCollaborativeChange = (value: string | undefined) => {
+    if (value === undefined) return;
 
-    if (!isCollaborative) return;
+    setEditorValue(value);
+    updateFile(selectedFile.id, { content: value });
 
-    const doc = getYDoc();
-    if (!doc) return;
-    const filesMap = getFilesMap();
-    if (!filesMap) return;
-
-    let ytext: Y.Text;
-    if (!filesMap.has(selectedFile.id)) {
-      ytext = new Y.Text();
-      ytext.insert(0, selectedFile.content);
-      filesMap.set(selectedFile.id, ytext);
-    } else {
-      ytext = filesMap.get(selectedFile.id)!;
-    }
-
-    const provider = getProvider();
-    if (editor.getModel()) {
-      const binding = new MonacoBinding(
-        ytext,
-        editor.getModel()!,
-        new Set([editor]),
-        provider?.awareness
-      );
-
-      (editorRef.current as any).binding = binding;
+    const room = new URLSearchParams(window.location.search).get("room");
+    if (room) {
+      sendFileUpdate(selectedFile.id, value);
     }
   };
 
@@ -135,22 +105,14 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
       theme={currentTheme}
       height="100%"
       language={getLanguage(selectedFile.name)}
-      // value={editorValue}
-      defaultValue={selectedFile.content}
+      value={editorValue}
       beforeMount={handleBeforeMount}
-      // onMount={(editor: monaco.editor.IStandaloneCodeEditor) =>
-      //   handleEditorDidMount(editor, editorRef)
-      // }
-      onMount={(editor, monacoInstance) =>
-        handleCollaborativeMount(editor, monacoInstance)
-      }
-      {...(!isCollaborative && {
-        onChange: (value) => {
-          if (value !== undefined) {
-            setEditorValue(value);
-          }
-        },
-      })}
+      onMount={(editor) => {
+        handleEditorDidMount(editor, editorRef);
+      }}
+      onChange={(val) => {
+        if (val !== undefined) handleCollaborativeChange(val);
+      }}
       options={{ ...editorOptions, ...currentSettings }}
     />
   );

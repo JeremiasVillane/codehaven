@@ -2,18 +2,18 @@ import { debugLog } from "@/helpers";
 import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
 import { initializeProjectIfEmpty } from "@/seed/seeder";
 import { dbService, syncService, webContainerService } from "@/services";
-import { getFilesMap, initCollaboration } from "@/services";
 import { FileData } from "@/types";
 import { compareObjectKeys } from "@/utils";
-import {
+import { useChannel } from "ably/react";
+import React, {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
-import * as Y from "yjs";
 
 interface IFileContext {
   files: FileData[];
@@ -28,6 +28,8 @@ interface IFileContext {
   getAllFiles: () => Promise<FileData[]>;
   loadFiles: () => Promise<void>;
   clearFiles: () => Promise<void>;
+  localClientId: string;
+  sendFileUpdate: (fileId: string, content: string) => void;
 }
 
 const FileContext = createContext<IFileContext | null>(null);
@@ -41,12 +43,14 @@ export const useFiles = () => {
   return context;
 };
 
-export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const FileProvider: React.FC<{
+  children: React.ReactNode;
+  room: string;
+}> = ({ children, room }) => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [currentFile, setCurrentFile] = useState<FileData | null>(null);
   const [currentDirectory, setCurrentDirectory] = useState<string | null>(null);
+  const localClientId = useRef(uuidv4()).current;
 
   const loadFiles = useCallback(async () => {
     try {
@@ -70,32 +74,6 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     })();
   }, [loadFiles]);
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const room = searchParams.get("room");
-    if (!room) return;
-
-    const doc = initCollaboration();
-
-    if (!doc) return;
-    const filesMap = getFilesMap();
-    if (!filesMap) return;
-
-    files.forEach((file) => {
-      if (!filesMap.has(file.id)) {
-        const ytext = new Y.Text();
-        ytext.insert(0, file.content);
-        filesMap.set(file.id, ytext);
-
-        ytext.observe(() => {
-          const newContent = ytext.toString();
-          console.log("newContent:", newContent);
-          updateFile(file.id, { content: newContent });
-        });
-      }
-    });
-  }, [files]);
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
@@ -126,26 +104,13 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!file) return;
     if (compareObjectKeys(file, newData)) return;
 
-    if (file) {
-      const updatedFile = {
-        ...file,
-        ...newData,
-        updatedAt: Date.now(),
-      };
-      await dbService.saveFile(updatedFile);
-      await webContainerService.writeFile(
-        updatedFile.path,
-        updatedFile.content
-      );
+    const updatedFile = { ...file, ...newData, updatedAt: Date.now() };
 
-      if (currentFile?.id === id) {
-        setCurrentFile(updatedFile);
-      }
+    await dbService.saveFile(updatedFile);
+    await webContainerService.writeFile(updatedFile.path, updatedFile.content);
 
-      setFiles((prevFiles) =>
-        prevFiles.map((f) => (f.id === id ? updatedFile : f))
-      );
-    }
+    if (currentFile?.id === id) setCurrentFile(updatedFile);
+    setFiles((prev) => prev.map((f) => (f.id === id ? updatedFile : f)));
   };
 
   const deleteFile = async (id: string) => {
@@ -155,15 +120,10 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     await dbService.deleteFile(id);
     await webContainerService.deleteFileFromWebContainer(fileToDelete.path);
     await loadFiles();
-
-    if (currentFile?.id === id) {
-      setCurrentFile(null);
-    }
+    if (currentFile?.id === id) setCurrentFile(null);
   };
 
-  const getAllFiles = async () => {
-    return dbService.getAllFiles();
-  };
+  const getAllFiles = async () => dbService.getAllFiles();
 
   const importFiles = async (files: FileList) => {
     try {
@@ -271,7 +231,78 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     await webContainerService.clearContainer();
   };
 
-  const value = {
+  const { channel } = useChannel(`project-${room}`, (msg) => {
+    if (msg.name === "fileUpdate") {
+      const { senderId, fileId, content } = msg.data;
+      if (senderId !== localClientId) {
+        updateFile(fileId, { content });
+      }
+    }
+    if (msg.name === "requestFullSync") {
+      const { senderId } = msg.data;
+      if (senderId === localClientId) return;
+      if (files.length > 0) {
+        channel.publish("fullSync", {
+          senderId: localClientId,
+          files: files.map((f) => ({
+            id: f.id,
+            name: f.name,
+            content: f.content,
+            path: f.path,
+            type: f.type,
+            parentId: f.parentId,
+            isDirectory: f.isDirectory,
+          })),
+        });
+      }
+    }
+    if (msg.name === "fullSync") {
+      const { senderId, files: remoteFiles } = msg.data;
+      if (senderId !== localClientId) {
+        handleFullSync(remoteFiles);
+      }
+    }
+  });
+
+  const sendFileUpdate = (fileId: string, content: string) => {
+    channel.publish("fileUpdate", { senderId: localClientId, fileId, content });
+  };
+
+  const handleFullSync = useCallback(
+    async (received: Partial<FileData>[]) => {
+      await dbService.clearAllFiles();
+      for (const rf of received) {
+        const newFile: FileData = {
+          id: rf.id!,
+          name: rf.name || "",
+          content: rf.content || "",
+          path: rf.path || "",
+          type: rf.type || "",
+          parentId: rf.parentId || null,
+          isDirectory: !!rf.isDirectory,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        await dbService.saveFile(newFile);
+        if (newFile.isDirectory) {
+          await webContainerService.createFolder(newFile.path);
+        } else {
+          await webContainerService.writeFile(newFile.path, newFile.content);
+        }
+      }
+      await loadFiles();
+    },
+    [loadFiles]
+  );
+
+  useEffect(() => {
+    if (!room) return;
+    if (files.length === 0) {
+      channel.publish("requestFullSync", { senderId: localClientId });
+    }
+  }, [room, files, channel, localClientId]);
+
+  const value: IFileContext = {
     files,
     currentFile,
     currentDirectory,
@@ -284,6 +315,8 @@ export const FileProvider: React.FC<{ children: React.ReactNode }> = ({
     getAllFiles,
     loadFiles,
     clearFiles,
+    localClientId,
+    sendFileUpdate,
   };
   externalContext = value;
 
