@@ -1,4 +1,3 @@
-import { useIsMobile } from "@/hooks";
 import { cn } from "@/utils";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
@@ -8,17 +7,18 @@ import { useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export function CollaborationLinkButton({ isHidden }: { isHidden: boolean }) {
-  const isMobile = useIsMobile();
+  const searchParams = new URLSearchParams(window.location.search);
   const toast = useRef<Toast>(null);
   const [visible, setVisible] = useState(false);
-  const [collabLink, setCollabLink] = useState("");
+  const [collabLink, setCollabLink] = useState(
+    searchParams.get("room") ? window.location.href : ""
+  );
 
   const showToast = (props: ToastMessage) => {
     toast.current?.show({ ...props });
   };
 
   const handleGenerateLink = () => {
-    const searchParams = new URLSearchParams(window.location.search);
     let room = searchParams.get("room");
 
     if (!room) {
