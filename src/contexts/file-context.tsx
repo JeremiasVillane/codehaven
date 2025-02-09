@@ -52,16 +52,61 @@ export const FileProvider: React.FC<{
   const [currentDirectory, setCurrentDirectory] = useState<string | null>(null);
   const localClientId = useRef(uuidv4()).current;
 
-  const loadFiles = useCallback(async () => {
-    try {
-      const allFiles = await dbService.getAllFiles();
-      setFiles(allFiles);
+  const [usePersistence, setUsePersistence] = useState<boolean>(() => {
+    const initSettings = getEditorSettings();
+    const paramRoom = new URLSearchParams(window.location.search).get("room");
+    if (paramRoom) return false;
 
-      await syncService.syncAllFilesToContainer(allFiles);
-    } catch (error) {
-      debugLog("[FILE_PROVIDER] Error loading files:", error);
+    return initSettings.persistStorage === "on";
+  });
+
+  useEffect(() => {
+    function handlePersistChange(e: any) {
+      const { persistStorage } = e.detail;
+      const paramRoom = new URLSearchParams(window.location.search).get("room");
+      if (paramRoom) {
+        setUsePersistence(false);
+      } else {
+        setUsePersistence(persistStorage === "on");
+      }
     }
+    window.addEventListener("persistStorageChange", handlePersistChange);
+    return () => {
+      window.removeEventListener("persistStorageChange", handlePersistChange);
+    };
   }, []);
+
+  const loadFiles = useCallback(async () => {
+    if (!usePersistence) {
+      const containerFiles = await webContainerService.readAllFiles("/");
+      debugLog(
+        "[FILE_PROVIDER] readAllFiles from container only",
+        containerFiles.length
+      );
+      setFiles(
+        containerFiles.map((cf) => ({
+          id: uuidv4(),
+          name: cf.path.split("/").pop() || "",
+          content: cf.content,
+          path: cf.path.replace(/^\/+/, ""),
+          type: cf.path.split(".").pop() || "",
+          parentId: null,
+          isDirectory: cf.isDirectory,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        }))
+      );
+    } else {
+      try {
+        const allFiles = await dbService.getAllFiles();
+        setFiles(allFiles);
+
+        await syncService.syncAllFilesToContainer(allFiles);
+      } catch (error) {
+        debugLog("[FILE_PROVIDER] Error loading files:", error);
+      }
+    }
+  }, [usePersistence]);
 
   useEffect(() => {
     (async () => {
@@ -77,7 +122,8 @@ export const FileProvider: React.FC<{
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
-      ? (await dbService.getFile(currentDirectory))?.path || ""
+      ? (usePersistence && (await dbService.getFile(currentDirectory)))?.path ||
+        ""
       : "";
 
     const newPath = parentPath ? `${parentPath}/${name}` : name;
@@ -95,18 +141,28 @@ export const FileProvider: React.FC<{
       updatedAt: Date.now(),
     };
 
-    await dbService.saveFile(newFile);
-    await loadFiles();
+    if (usePersistence) {
+      await dbService.saveFile(newFile);
+      await loadFiles();
+    } else {
+      if (isDirectory) {
+        await webContainerService.createFolder(newPath);
+      } else {
+        await webContainerService.writeFile(newPath, "");
+      }
+
+      await loadFiles();
+    }
   };
 
   const updateFile = async (id: string, newData: Partial<FileData>) => {
-    const file = await dbService.getFile(id);
+    const file = files.find((f) => f.id === id);
     if (!file) return;
     if (compareObjectKeys(file, newData)) return;
 
     const updatedFile = { ...file, ...newData, updatedAt: Date.now() };
 
-    await dbService.saveFile(updatedFile);
+    if (usePersistence) await dbService.saveFile(updatedFile);
     await webContainerService.writeFile(updatedFile.path, updatedFile.content);
 
     if (currentFile?.id === id) setCurrentFile(updatedFile);
@@ -114,16 +170,34 @@ export const FileProvider: React.FC<{
   };
 
   const deleteFile = async (id: string) => {
-    const fileToDelete = await dbService.getFile(id);
+    const fileToDelete = files.find((f) => f.id === id);
     if (!fileToDelete) return;
 
-    await dbService.deleteFile(id);
+    if (usePersistence) await dbService.deleteFile(id);
+
     await webContainerService.deleteFileFromWebContainer(fileToDelete.path);
     await loadFiles();
     if (currentFile?.id === id) setCurrentFile(null);
   };
 
-  const getAllFiles = async () => dbService.getAllFiles();
+  const getAllFiles = async () => {
+    if (!usePersistence) {
+      const containerFiles = await webContainerService.readAllFiles("/");
+      return containerFiles.map((cf) => ({
+        id: uuidv4(),
+        name: cf.path.split("/").pop() || "",
+        content: cf.content,
+        path: cf.path.replace(/^\/+/, ""),
+        type: cf.path.split(".").pop() || "",
+        parentId: null,
+        isDirectory: cf.isDirectory,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      }));
+    } else {
+      return dbService.getAllFiles();
+    }
+  };
 
   const importFiles = async (files: FileList) => {
     try {
@@ -196,9 +270,11 @@ export const FileProvider: React.FC<{
       }
 
       // Save to IndexedDB
-      await dbService.clearAllFiles();
-      for (const file of processedFiles) {
-        await dbService.saveFile(file);
+      if (usePersistence) {
+        await dbService.clearAllFiles();
+        for (const file of processedFiles) {
+          await dbService.saveFile(file);
+        }
       }
 
       // Synchronize incrementally in the WebContainer:
@@ -226,9 +302,11 @@ export const FileProvider: React.FC<{
   };
 
   const clearFiles = async () => {
-    await dbService.clearAllFiles();
-    await loadFiles();
+    if (usePersistence) {
+      await dbService.clearAllFiles();
+    }
     await webContainerService.clearContainer();
+    await loadFiles();
   };
 
   const { channel } = useChannel(`project-${room}`, (msg) => {
@@ -264,13 +342,13 @@ export const FileProvider: React.FC<{
     }
   });
 
-  const sendFileUpdate = (fileId: string, content: string) => {
-    channel.publish("fileUpdate", { senderId: localClientId, fileId, content });
-  };
-
   const handleFullSync = useCallback(
     async (received: Partial<FileData>[]) => {
-      await dbService.clearAllFiles();
+      if (usePersistence) {
+        await dbService.clearAllFiles();
+      }
+      await webContainerService.clearContainer();
+
       for (const rf of received) {
         const newFile: FileData = {
           id: rf.id!,
@@ -283,7 +361,9 @@ export const FileProvider: React.FC<{
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        await dbService.saveFile(newFile);
+        if (usePersistence) {
+          await dbService.saveFile(newFile);
+        }
         if (newFile.isDirectory) {
           await webContainerService.createFolder(newFile.path);
         } else {
@@ -292,7 +372,7 @@ export const FileProvider: React.FC<{
       }
       await loadFiles();
     },
-    [loadFiles]
+    [usePersistence, loadFiles]
   );
 
   useEffect(() => {
@@ -301,6 +381,10 @@ export const FileProvider: React.FC<{
       channel.publish("requestFullSync", { senderId: localClientId });
     }
   }, [room, files, channel, localClientId]);
+
+  const sendFileUpdate = (fileId: string, content: string) => {
+    channel.publish("fileUpdate", { senderId: localClientId, fileId, content });
+  };
 
   const value: IFileContext = {
     files,

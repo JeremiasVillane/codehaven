@@ -37,7 +37,8 @@ export function SettingsModal({ settings }: { settings: EditorSettings }) {
 
   const handleSave = () => {
     persistSettings(localSettings);
-    setPersistStorage(localSettings.persistStorage === "on");
+    const detail = { persistStorage: localSettings.persistStorage };
+    window.dispatchEvent(new CustomEvent("persistStorageChange", { detail }));
 
     window.dispatchEvent(
       new CustomEvent("editorSettingsChange", { detail: localSettings })
