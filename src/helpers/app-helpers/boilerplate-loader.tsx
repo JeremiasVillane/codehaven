@@ -15,7 +15,9 @@ import { debugLog } from "./debug-log";
 export async function boilerplateLoader(templateId: string) {
   try {
     const { template, commands } = boilerplates[templateId];
-    const { autoRunStartupScript } = getEditorSettings();
+    const { autoRunStartupScript, persistStorage } = getEditorSettings();
+    const room = new URLSearchParams(window.location.search).get("room");
+    const usePersistence = persistStorage === "on" && !room;
 
     if (!!commands && commands.length > 1 && autoRunStartupScript === "on") {
       window.dispatchEvent(new CustomEvent("seeding"));
@@ -23,7 +25,9 @@ export async function boilerplateLoader(templateId: string) {
 
     getAppContext().dockLayout.loadLayout(defaultLayout);
 
-    await dbService.clearAllFiles();
+    if (usePersistence) {
+      await dbService.clearAllFiles();
+    } else getFileContext().clearFiles();
 
     const filesToInsert = flattenInitialFiles(template);
 
@@ -38,8 +42,10 @@ export async function boilerplateLoader(templateId: string) {
       }
     }
 
-    for (const file of filesToInsert) {
-      await dbService.saveFile(file);
+    if (usePersistence) {
+      for (const file of filesToInsert) {
+        await dbService.saveFile(file);
+      }
     }
 
     await webContainerService.clearContainer();

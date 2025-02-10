@@ -4,10 +4,15 @@ import { syncService, webContainerService } from "@/services";
 import { Terminal as XTerm } from "@xterm/xterm";
 import { PanelData, TabData } from "rc-dock";
 import { Terminal } from "./terminal";
+import { getEditorSettings } from "./code-editor-helpers";
 
 async function doRefresh() {
+  const { persistStorage } = getEditorSettings();
+  const room = new URLSearchParams(window.location.search).get("room");
+  const usePersistence = persistStorage === "on" && !room;
+
   try {
-    await syncService.syncContainerToDB();
+    if (usePersistence) await syncService.syncContainerToDB();
     await getFileContext().loadFiles();
   } catch (error) {
     debugLog("[TERMINAL] Sync error", error);

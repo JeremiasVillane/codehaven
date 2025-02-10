@@ -1,10 +1,9 @@
-import { DEFAULT_SETTINGS } from "@/constants";
-import { useFiles } from "@/contexts";
-import { useTheme } from "@/hooks";
-import { EditorSettings, FileData } from "@/types";
+import { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import * as monaco from "monaco-editor";
-import { useEffect, useRef, useState } from "react";
+import { useTheme } from "@/hooks";
+import { useFiles } from "@/contexts";
+import { EditorSettings, FileData } from "@/types";
 import {
   getLanguage,
   handleBeforeMount,
@@ -13,11 +12,13 @@ import {
   restoreBlankTab,
 } from "./code-editor-helpers";
 import editorOptions from "./code-editor-options";
+import { DEFAULT_SETTINGS } from "@/constants";
 
 export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   const { theme } = useTheme();
-  const { updateFile, sendFileUpdate, currentFile } = useFiles();
+  const { files, updateFile, sendFileUpdate } = useFiles();
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+
   const [editorValue, setEditorValue] = useState(selectedFile.content);
   const [currentTheme, setCurrentTheme] = useState<"vs-dark" | "vs-light">(
     `vs-${theme}`
@@ -26,6 +27,8 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
     const stored = localStorage.getItem("codehaven:editor-settings");
     return stored ? JSON.parse(stored) : DEFAULT_SETTINGS;
   });
+
+  const loadedFile = files.find((f) => f.id === selectedFile.id);
 
   useEffect(() => {
     if (editorRef.current) {
@@ -57,8 +60,8 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
   }, []);
 
   useEffect(() => {
-    setEditorValue(currentFile.content);
-  }, [currentFile.content]);
+    setEditorValue(loadedFile.content);
+  }, [loadedFile]);
 
   useEffect(() => {
     const room = new URLSearchParams(window.location.search).get("room");
@@ -88,7 +91,7 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
 
   useEffect(() => () => restoreBlankTab(), []);
 
-  const handleCollaborativeChange = (value: string | undefined) => {
+  const handleChange = (value?: string) => {
     if (value === undefined) return;
 
     setEditorValue(value);
@@ -110,9 +113,7 @@ export const CodeEditor = ({ selectedFile }: { selectedFile: FileData }) => {
       onMount={(editor) => {
         handleEditorDidMount(editor, editorRef);
       }}
-      onChange={(val) => {
-        if (val !== undefined) handleCollaborativeChange(val);
-      }}
+      onChange={handleChange}
       options={{ ...editorOptions, ...currentSettings }}
     />
   );

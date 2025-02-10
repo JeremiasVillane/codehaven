@@ -1,10 +1,3 @@
-import { debugLog } from "@/helpers";
-import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
-import { initializeProjectIfEmpty } from "@/seed/seeder";
-import { dbService, syncService, webContainerService } from "@/services";
-import { FileData } from "@/types";
-import { compareObjectKeys } from "@/utils";
-import { useChannel } from "ably/react";
 import React, {
   createContext,
   useCallback,
@@ -14,6 +7,15 @@ import React, {
   useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { useChannel } from "ably/react";
+import { dbService } from "@/services/db-service";
+import { syncService } from "@/services/sync-service";
+import { webContainerService } from "@/services/webcontainer-service";
+import { debugLog } from "@/helpers";
+import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
+import { initializeProjectIfEmpty } from "@/seed/seeder";
+import { compareObjectKeys } from "@/utils";
+import { FileData } from "@/types";
 
 interface IFileContext {
   files: FileData[];
@@ -50,6 +52,7 @@ export const FileProvider: React.FC<{
   const [files, setFiles] = useState<FileData[]>([]);
   const [currentFile, setCurrentFile] = useState<FileData | null>(null);
   const [currentDirectory, setCurrentDirectory] = useState<string | null>(null);
+
   const localClientId = useRef(uuidv4()).current;
 
   const [usePersistence, setUsePersistence] = useState<boolean>(() => {
@@ -78,35 +81,32 @@ export const FileProvider: React.FC<{
 
   const loadFiles = useCallback(async () => {
     if (!usePersistence) {
-      const containerFiles = await webContainerService.readAllFiles("/");
-      debugLog(
-        "[FILE_PROVIDER] readAllFiles from container only",
-        containerFiles.length
-      );
-      setFiles(
-        containerFiles.map((cf) => ({
-          id: uuidv4(),
-          name: cf.path.split("/").pop() || "",
-          content: cf.content,
-          path: cf.path.replace(/^\/+/, ""),
-          type: cf.path.split(".").pop() || "",
-          parentId: null,
-          isDirectory: cf.isDirectory,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        }))
-      );
-    } else {
-      try {
-        const allFiles = await dbService.getAllFiles();
-        setFiles(allFiles);
-
-        await syncService.syncAllFilesToContainer(allFiles);
-      } catch (error) {
-        debugLog("[FILE_PROVIDER] Error loading files:", error);
+      if (files.length > 0) {
+        debugLog(
+          "[FILE_PROVIDER] Already have files in memory, skipping container read"
+        );
+        return;
       }
+
+      const containerFiles = await webContainerService.readAllFiles("/");
+      const loaded = containerFiles.map((cf) => ({
+        id: cf.path.replace(/^\/+/, ""),
+        name: cf.path.split("/").pop() || "",
+        content: cf.content,
+        path: cf.path.replace(/^\/+/, ""),
+        type: cf.path.split(".").pop() || "",
+        parentId: null,
+        isDirectory: cf.isDirectory,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      }));
+      setFiles(loaded);
+    } else {
+      const allFiles = await dbService.getAllFiles();
+      setFiles(allFiles);
+      await syncService.syncAllFilesToContainer(allFiles);
     }
-  }, [usePersistence]);
+  }, [usePersistence, files]);
 
   useEffect(() => {
     (async () => {
@@ -118,7 +118,7 @@ export const FileProvider: React.FC<{
         debugLog("[FILE_PROVIDER] Error initializing project:", error);
       }
     })();
-  }, [loadFiles]);
+  }, []);
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
@@ -128,9 +128,10 @@ export const FileProvider: React.FC<{
 
     const newPath = parentPath ? `${parentPath}/${name}` : name;
     const fileExtension = name.split(".").pop() || "";
+    const newId = newPath.replace(/^\/+/, "") || uuidv4();
 
     const newFile: FileData = {
-      id: uuidv4(),
+      id: newId,
       name,
       content: "",
       path: newPath,
@@ -143,16 +144,14 @@ export const FileProvider: React.FC<{
 
     if (usePersistence) {
       await dbService.saveFile(newFile);
-      await loadFiles();
-    } else {
-      if (isDirectory) {
-        await webContainerService.createFolder(newPath);
-      } else {
-        await webContainerService.writeFile(newPath, "");
-      }
-
-      await loadFiles();
     }
+    if (isDirectory) {
+      await webContainerService.createFolder(newPath);
+    } else {
+      await webContainerService.writeFile(newPath, "");
+    }
+
+    setFiles((prev) => [...prev, newFile]);
   };
 
   const updateFile = async (id: string, newData: Partial<FileData>) => {
@@ -162,7 +161,9 @@ export const FileProvider: React.FC<{
 
     const updatedFile = { ...file, ...newData, updatedAt: Date.now() };
 
-    if (usePersistence) await dbService.saveFile(updatedFile);
+    if (usePersistence) {
+      await dbService.saveFile(updatedFile);
+    }
     await webContainerService.writeFile(updatedFile.path, updatedFile.content);
 
     if (currentFile?.id === id) setCurrentFile(updatedFile);
@@ -172,54 +173,29 @@ export const FileProvider: React.FC<{
   const deleteFile = async (id: string) => {
     const fileToDelete = files.find((f) => f.id === id);
     if (!fileToDelete) return;
-
-    if (usePersistence) await dbService.deleteFile(id);
-
+    if (usePersistence) {
+      await dbService.deleteFile(id);
+    }
     await webContainerService.deleteFileFromWebContainer(fileToDelete.path);
-    await loadFiles();
+    setFiles((prev) => prev.filter((f) => f.id !== id));
     if (currentFile?.id === id) setCurrentFile(null);
   };
 
-  const getAllFiles = async () => {
-    if (!usePersistence) {
-      const containerFiles = await webContainerService.readAllFiles("/");
-      return containerFiles.map((cf) => ({
-        id: uuidv4(),
-        name: cf.path.split("/").pop() || "",
-        content: cf.content,
-        path: cf.path.replace(/^\/+/, ""),
-        type: cf.path.split(".").pop() || "",
-        parentId: null,
-        isDirectory: cf.isDirectory,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      }));
-    } else {
-      return dbService.getAllFiles();
-    }
-  };
-
-  const importFiles = async (files: FileList) => {
+  const importFiles = async (fileList: FileList) => {
     try {
-      const entries = Array.from(files);
+      const entries = Array.from(fileList);
       const processedFiles: FileData[] = [];
-
-      // Get root folder name to skip it
       const rootFolder = entries[0].webkitRelativePath.split("/")[0];
 
       for (const file of entries) {
-        // Skip the root folder itself
         if (file.webkitRelativePath === rootFolder) continue;
-
         const fullPath = file.webkitRelativePath;
-        // Remove root folder from path
         const relativePath = fullPath.substring(rootFolder.length + 1);
         if (!relativePath) continue;
 
         const pathParts = relativePath.split("/");
         const name = pathParts[pathParts.length - 1];
 
-        // Create parent folders if needed
         let currentPath = "";
         for (const part of pathParts.slice(0, -1)) {
           currentPath = currentPath ? `${currentPath}/${part}` : part;
@@ -229,12 +205,12 @@ export const FileProvider: React.FC<{
 
           if (!dirExists) {
             processedFiles.push({
-              id: uuidv4(),
+              id: currentPath || uuidv4(),
               name: part,
               content: "",
               path: currentPath,
               type: "",
-              parentId: null, // Will set later
+              parentId: null,
               isDirectory: true,
               createdAt: Date.now(),
               updatedAt: Date.now(),
@@ -242,34 +218,20 @@ export const FileProvider: React.FC<{
           }
         }
 
-        // Add the file
         const content = await file.text();
         processedFiles.push({
-          id: uuidv4(),
+          id: relativePath || uuidv4(),
           name,
           content,
           path: relativePath,
           type: name.split(".").pop() || "",
-          parentId: null, // Will set later
+          parentId: null,
           isDirectory: false,
           createdAt: Date.now(),
           updatedAt: Date.now(),
         });
       }
 
-      // Set parent IDs
-      for (const file of processedFiles) {
-        const pathParts = file.path.split("/");
-        if (pathParts.length > 1) {
-          const parentPath = pathParts.slice(0, -1).join("/");
-          const parent = processedFiles.find(
-            (f) => f.path === parentPath && f.isDirectory
-          );
-          file.parentId = parent ? parent.id : null;
-        }
-      }
-
-      // Save to IndexedDB
       if (usePersistence) {
         await dbService.clearAllFiles();
         for (const file of processedFiles) {
@@ -277,8 +239,6 @@ export const FileProvider: React.FC<{
         }
       }
 
-      // Synchronize incrementally in the WebContainer:
-      // 1. Create the folders (only if they are new).
       const createdFolders = new Set<string>();
       for (const file of processedFiles) {
         if (file.isDirectory && !createdFolders.has(file.path)) {
@@ -286,15 +246,13 @@ export const FileProvider: React.FC<{
           createdFolders.add(file.path);
         }
       }
-      // 2. Write the files with their contents
       for (const file of processedFiles) {
         if (!file.isDirectory) {
           await webContainerService.writeFile(file.path, file.content);
         }
       }
 
-      // Finally, update the list of files in the context state.
-      await loadFiles();
+      setFiles(processedFiles);
     } catch (error) {
       debugLog("[FILE_PROVIDER] Error importing files:", error);
       throw error;
@@ -306,7 +264,8 @@ export const FileProvider: React.FC<{
       await dbService.clearAllFiles();
     }
     await webContainerService.clearContainer();
-    await loadFiles();
+    setFiles([]);
+    setCurrentFile(null);
   };
 
   const { channel } = useChannel(`project-${room}`, (msg) => {
@@ -322,15 +281,7 @@ export const FileProvider: React.FC<{
       if (files.length > 0) {
         channel.publish("fullSync", {
           senderId: localClientId,
-          files: files.map((f) => ({
-            id: f.id,
-            name: f.name,
-            content: f.content,
-            path: f.path,
-            type: f.type,
-            parentId: f.parentId,
-            isDirectory: f.isDirectory,
-          })),
+          files,
         });
       }
     }
@@ -343,36 +294,25 @@ export const FileProvider: React.FC<{
   });
 
   const handleFullSync = useCallback(
-    async (received: Partial<FileData>[]) => {
+    async (received: FileData[]) => {
       if (usePersistence) {
         await dbService.clearAllFiles();
       }
       await webContainerService.clearContainer();
 
       for (const rf of received) {
-        const newFile: FileData = {
-          id: rf.id!,
-          name: rf.name || "",
-          content: rf.content || "",
-          path: rf.path || "",
-          type: rf.type || "",
-          parentId: rf.parentId || null,
-          isDirectory: !!rf.isDirectory,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        };
         if (usePersistence) {
-          await dbService.saveFile(newFile);
+          await dbService.saveFile(rf);
         }
-        if (newFile.isDirectory) {
-          await webContainerService.createFolder(newFile.path);
+        if (rf.isDirectory) {
+          await webContainerService.createFolder(rf.path);
         } else {
-          await webContainerService.writeFile(newFile.path, newFile.content);
+          await webContainerService.writeFile(rf.path, rf.content);
         }
       }
-      await loadFiles();
+      setFiles(received);
     },
-    [usePersistence, loadFiles]
+    [usePersistence]
   );
 
   useEffect(() => {
@@ -383,7 +323,11 @@ export const FileProvider: React.FC<{
   }, [room, files, channel, localClientId]);
 
   const sendFileUpdate = (fileId: string, content: string) => {
-    channel.publish("fileUpdate", { senderId: localClientId, fileId, content });
+    channel.publish("fileUpdate", {
+      senderId: localClientId,
+      fileId,
+      content,
+    });
   };
 
   const value: IFileContext = {
@@ -396,7 +340,7 @@ export const FileProvider: React.FC<{
     setCurrentFile,
     setCurrentDirectory,
     deleteFile,
-    getAllFiles,
+    getAllFiles: async () => files,
     loadFiles,
     clearFiles,
     localClientId,
