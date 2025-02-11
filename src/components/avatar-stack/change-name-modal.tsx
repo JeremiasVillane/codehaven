@@ -68,7 +68,7 @@ export default function ChangeNameModal({
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             maxLength={MAX_NAME_LENGTH}
-            className="my-3"
+            className="my-3 w-full"
             disabled={isLoading}
           />
 

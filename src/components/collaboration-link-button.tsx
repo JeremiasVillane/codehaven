@@ -62,7 +62,7 @@ export function CollaborationLinkButton({ isHidden }: { isHidden: boolean }) {
           isHidden ? "hidden" : ""
         )}
       >
-        <i className="pi pi-share-alt text-base md:text-[1em]" />{" "}
+        <i className="pi pi-share-alt text-sm -mx-0.5 md:mx-0 md:text-[1em]" />{" "}
         <span className="hidden md:flex">Share</span>
       </Button>
 
@@ -78,6 +78,7 @@ export function CollaborationLinkButton({ isHidden }: { isHidden: boolean }) {
           if (!visible) return;
           setVisible(false);
         }}
+        dismissableMask
       >
         <article className="sm:max-w-md space-y-4">
           <section className="leading-6 py-2 text-pretty">
@@ -103,6 +104,7 @@ export function CollaborationLinkButton({ isHidden }: { isHidden: boolean }) {
               type="submit"
               className="px-3"
               onClick={handleCopyLink}
+              disabled={!collabLink || collabLink.length < 1}
             >
               <span className="sr-only">Copy</span>
               <i className="pi pi-clone" />
