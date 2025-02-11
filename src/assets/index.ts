@@ -1,3 +1,4 @@
+export * from "./CursorSvg";
 export * from "./GithubIcon";
 export * from "./JavaScriptIcon";
 export * from "./LinkedinIcon";
