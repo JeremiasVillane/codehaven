@@ -12,8 +12,7 @@ import { SelectButton } from "primereact/selectbutton";
 import { useEffect, useState } from "react";
 
 export function SettingsModal({ settings }: { settings: EditorSettings }) {
-  const { showSettingsModal, setShowSettingsModal, setPersistStorage } =
-    useApp();
+  const { showSettingsModal, setShowSettingsModal } = useApp();
   const [localSettings, setLocalSettings] = useState<EditorSettings>(settings);
 
   useEffect(() => {

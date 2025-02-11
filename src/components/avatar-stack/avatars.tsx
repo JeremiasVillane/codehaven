@@ -6,17 +6,32 @@ import {
   calculateTotalWidth,
   getUserInitials,
 } from "./avatars-helpers";
+import ChangeNameModal from "./change-name-modal";
 import Surplus from "./surplus";
 import UserInfo from "./user-info";
 
 const SelfAvatar: React.FC<{ self: Member | null }> = ({ self }) => {
   const [hover, setHover] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [newName, setNewName] = useState("");
+
+  const handleClick = () => {
+    if (!self) return;
+    setNewName(self.profileData.name);
+    setShowModal(true);
+  };
+
+  if (!self) {
+    return <i className="pi pi-spin pi-spinner" />;
+  }
 
   return (
     <div
+      title="Click to change your name"
       onMouseOver={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className="relative rounded-full flex items-center justify-center border-2 border-border"
+      onClick={handleClick}
+      className="relative rounded-full flex items-center justify-center border-2 border-border cursor-pointer"
       style={{
         width: `${AVATAR_SIZE}px`,
         height: `${AVATAR_SIZE}px`,
@@ -27,14 +42,20 @@ const SelfAvatar: React.FC<{ self: Member | null }> = ({ self }) => {
         You
       </p>
 
-      {hover && self ? (
+      {hover && self && (
         <div
           className="absolute top-[2.2rem] p-4 bg-white dark:bg-black text-slate-600 dark:text-white rounded-md min-w-[240px] z-50"
           style={{ left: "50%", transform: "translateX(-50%)" }}
         >
           <UserInfo user={self} isSelf />
         </div>
-      ) : null}
+      )}
+
+      {showModal && (
+        <ChangeNameModal
+          {...{ showModal, setShowModal, newName, setNewName }}
+        />
+      )}
     </div>
   );
 };

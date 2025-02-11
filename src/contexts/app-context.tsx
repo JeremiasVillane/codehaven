@@ -2,8 +2,6 @@ import DockLayout from "rc-dock";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface IAppContext {
-  persistStorageEnabled: boolean;
-  setPersistStorage: (val: boolean) => void;
   dockLayout: DockLayout;
   setDockLayout: (val: DockLayout) => void;
   projectName: string;
@@ -32,7 +30,6 @@ export const useApp = () => {
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [persistStorageEnabled, setPersistStorage] = useState(true);
   const [dockLayout, setDockLayout] = useState<DockLayout | null>(null);
   const [projectName, setProjectName] = useState(() => {
     const savedName = localStorage.getItem("codehaven:project-name");
@@ -48,8 +45,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [projectName]);
 
   const value = {
-    persistStorageEnabled,
-    setPersistStorage,
     dockLayout,
     setDockLayout,
     projectName,
