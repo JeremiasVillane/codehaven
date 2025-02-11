@@ -1,5 +1,10 @@
 import { GithubIcon, LinkedinIcon } from "@/assets";
-import { CollaborationLinkButton, ProjectName, RunButton } from "@/components";
+import {
+  CollaborationLinkButton,
+  AvatarStack,
+  ProjectName,
+  RunButton,
+} from "@/components";
 import { useIsMobile } from "@/hooks";
 import { cn } from "@/utils";
 import { useState } from "react";
@@ -37,6 +42,11 @@ export function Header() {
       />
 
       <section className="flex items-center gap-1 md:gap-2">
+        <div className="flex items-center gap-1.5">
+          <AvatarStack />
+          <span className="px-0.5 md:px-2 text-gray-400">|</span>
+        </div>
+
         <CollaborationLinkButton isHidden={isMobile && isEditingName} />
         <RunButton isHidden={isMobile && isEditingName} />
         <ThemeSwitcher />

@@ -1,3 +1,4 @@
+import { SpaceMember } from "@ably/spaces";
 import { DBSchema } from "idb";
 
 export type FileData = {
@@ -44,4 +45,8 @@ export type EditorSettings = {
   persistStorage: "on" | "off";
   autoLoadExample: "on" | "off";
   autoRunStartupScript: "on" | "off";
+};
+
+export type Member = Omit<SpaceMember, "profileData"> & {
+  profileData: { memberColor: string; name: string };
 };

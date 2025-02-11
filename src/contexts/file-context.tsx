@@ -1,21 +1,20 @@
+import { debugLog } from "@/helpers";
+import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
+import { initializeProjectIfEmpty } from "@/seed/seeder";
+import { dbService } from "@/services/db-service";
+import { syncService } from "@/services/sync-service";
+import { webContainerService } from "@/services/webcontainer-service";
+import { FileData } from "@/types";
+import { compareObjectKeys } from "@/utils";
+import { useSpace } from "@ably/spaces/react";
 import React, {
   createContext,
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useChannel } from "ably/react";
-import { dbService } from "@/services/db-service";
-import { syncService } from "@/services/sync-service";
-import { webContainerService } from "@/services/webcontainer-service";
-import { debugLog } from "@/helpers";
-import { getEditorSettings } from "@/layout/middle-panel/code-editor-helpers";
-import { initializeProjectIfEmpty } from "@/seed/seeder";
-import { compareObjectKeys } from "@/utils";
-import { FileData } from "@/types";
 
 interface IFileContext {
   files: FileData[];
@@ -30,7 +29,6 @@ interface IFileContext {
   getAllFiles: () => Promise<FileData[]>;
   loadFiles: () => Promise<void>;
   clearFiles: () => Promise<void>;
-  localClientId: string;
   sendFileUpdate: (fileId: string, content: string) => void;
 }
 
@@ -45,15 +43,12 @@ export const useFiles = () => {
   return context;
 };
 
-export const FileProvider: React.FC<{
-  children: React.ReactNode;
-  room: string;
-}> = ({ children, room }) => {
+export const FileProvider = ({ children }: { children: React.ReactNode }) => {
   const [files, setFiles] = useState<FileData[]>([]);
   const [currentFile, setCurrentFile] = useState<FileData | null>(null);
   const [currentDirectory, setCurrentDirectory] = useState<string | null>(null);
 
-  const localClientId = useRef(uuidv4()).current;
+  const { space } = useSpace();
 
   const [usePersistence, setUsePersistence] = useState<boolean>(() => {
     const initSettings = getEditorSettings();
@@ -64,7 +59,7 @@ export const FileProvider: React.FC<{
   });
 
   useEffect(() => {
-    function handlePersistChange(e: any) {
+    function handlePersistChange(e: CustomEvent<{ persistStorage: string }>) {
       const { persistStorage } = e.detail;
       const paramRoom = new URLSearchParams(window.location.search).get("room");
       if (paramRoom) {
@@ -73,9 +68,15 @@ export const FileProvider: React.FC<{
         setUsePersistence(persistStorage === "on");
       }
     }
-    window.addEventListener("persistStorageChange", handlePersistChange);
+    window.addEventListener(
+      "persistStorageChange",
+      handlePersistChange as EventListener
+    );
     return () => {
-      window.removeEventListener("persistStorageChange", handlePersistChange);
+      window.removeEventListener(
+        "persistStorageChange",
+        handlePersistChange as EventListener
+      );
     };
   }, []);
 
@@ -102,9 +103,13 @@ export const FileProvider: React.FC<{
       }));
       setFiles(loaded);
     } else {
-      const allFiles = await dbService.getAllFiles();
-      setFiles(allFiles);
-      await syncService.syncAllFilesToContainer(allFiles);
+      try {
+        const allFiles = await dbService.getAllFiles();
+        setFiles(allFiles);
+        await syncService.syncAllFilesToContainer(allFiles);
+      } catch (error) {
+        debugLog("[FILE_CONTEXT] Error loading files:", error);
+      }
     }
   }, [usePersistence, files]);
 
@@ -118,14 +123,13 @@ export const FileProvider: React.FC<{
         debugLog("[FILE_PROVIDER] Error initializing project:", error);
       }
     })();
-  }, []);
+  }, [loadFiles]); // []
 
   const createFile = async (name: string, isDirectory: boolean) => {
     const parentPath = currentDirectory
       ? (usePersistence && (await dbService.getFile(currentDirectory)))?.path ||
         ""
       : "";
-
     const newPath = parentPath ? `${parentPath}/${name}` : name;
     const fileExtension = name.split(".").pop() || "";
     const newId = newPath.replace(/^\/+/, "") || uuidv4();
@@ -268,31 +272,6 @@ export const FileProvider: React.FC<{
     setCurrentFile(null);
   };
 
-  const { channel } = useChannel(`project-${room}`, (msg) => {
-    if (msg.name === "fileUpdate") {
-      const { senderId, fileId, content } = msg.data;
-      if (senderId !== localClientId) {
-        updateFile(fileId, { content });
-      }
-    }
-    if (msg.name === "requestFullSync") {
-      const { senderId } = msg.data;
-      if (senderId === localClientId) return;
-      if (files.length > 0) {
-        channel.publish("fullSync", {
-          senderId: localClientId,
-          files,
-        });
-      }
-    }
-    if (msg.name === "fullSync") {
-      const { senderId, files: remoteFiles } = msg.data;
-      if (senderId !== localClientId) {
-        handleFullSync(remoteFiles);
-      }
-    }
-  });
-
   const handleFullSync = useCallback(
     async (received: FileData[]) => {
       if (usePersistence) {
@@ -316,15 +295,53 @@ export const FileProvider: React.FC<{
   );
 
   useEffect(() => {
-    if (!room) return;
-    if (files.length === 0) {
-      channel.publish("requestFullSync", { senderId: localClientId });
+    if (!space?.channel) return;
+
+    const handler = (msg: any) => {
+      const { name, data } = msg;
+      if (!space?.client?.clientId) return;
+      const myClientId = space.client.clientId;
+
+      if (name === "requestFullSync") {
+        const { senderId } = data;
+        if (senderId !== myClientId && files.length > 0) {
+          space.channel.publish("fullSync", {
+            senderId: myClientId,
+            files,
+          });
+        }
+      } else if (name === "fullSync") {
+        const { senderId, files: remoteFiles } = data;
+        if (senderId !== myClientId) {
+          handleFullSync(remoteFiles);
+        }
+      } else if (name === "fileUpdate") {
+        const { senderId, fileId, content } = data;
+        if (senderId !== myClientId) {
+          updateFile(fileId, { content });
+        }
+      }
+    };
+
+    space.channel.subscribe(handler);
+    return () => {
+      space.channel.unsubscribe(handler);
+    };
+  }, [space, files, handleFullSync, updateFile]);
+
+  useEffect(() => {
+    if (!space?.channel) return;
+    if (files.length === 0 && space.client?.clientId) {
+      space.channel.publish("requestFullSync", {
+        senderId: space.client.clientId,
+      });
     }
-  }, [room, files, channel, localClientId]);
+  }, [space, files]);
 
   const sendFileUpdate = (fileId: string, content: string) => {
-    channel.publish("fileUpdate", {
-      senderId: localClientId,
+    if (!space?.channel || !space.client?.clientId) return;
+    space.channel.publish("fileUpdate", {
+      senderId: space.client.clientId,
       fileId,
       content,
     });
@@ -343,7 +360,6 @@ export const FileProvider: React.FC<{
     getAllFiles: async () => files,
     loadFiles,
     clearFiles,
-    localClientId,
     sendFileUpdate,
   };
   externalContext = value;
